@@ -4,8 +4,6 @@ using Songhay.Extensions;
 using Songhay.Models;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -46,16 +44,24 @@ namespace Songhay.Social.Shell.Tests
         public void ShouldUseLinqToTwitterToFindInactiveAccounts()
         {
             //https://linqtotwitter.codeplex.com/wikipage?title=Showing%20Friends
+
+            Func<Friendship, long, bool> filter = (i, cursor) =>
+            {
+                return
+                    (i.Type == FriendshipType.FollowersList) &&
+                    (i.ScreenName == "KinteSpace") &&
+                    (i.Count == 1000) &&
+                    (i.Cursor == cursor)
+                    ;
+            };
+
             using (var ctx = new TwitterContext(this._authorizer))
             {
                 long cursor = -1;
                 do
                 {
                     var friendship = ctx.Friendship
-                        .Where(i => i.Type == FriendshipType.FollowersList)
-                        .Where(i => i.ScreenName == "KinteSpace")
-                        .Where(i => i.Count == 1000)
-                        .Where(i => i.Cursor == cursor)
+                        .Where(i => filter(i, cursor))
                         .Single();
 
                     if (friendship == null) break;
@@ -74,13 +80,18 @@ namespace Songhay.Social.Shell.Tests
         [TestMethod]
         public void ShouldUseLinqToTwitterToReadFavoritesWithSingleUserAuthorizer()
         {
+            bool filter(Favorites i)
+            {
+                return
+                    (i.Type == FavoritesType.Favorites) &&
+                    (i.IncludeEntities == false) &&
+                    (i.Count == 50)
+                    ;
+            }
+
             using (var ctx = new TwitterContext(this._authorizer))
             {
-                var query = ctx.Favorites
-                    .Where(i => i.Type == FavoritesType.Favorites)
-                    .Where(i => i.IncludeEntities == false)
-                    .Where(i => i.Count == 50)
-                    ;
+                var query = ctx.Favorites.Where(filter);
 
                 var favorites = query.ToList();
                 Assert.IsNotNull(favorites, "The expected favorites are not here.");
@@ -122,13 +133,18 @@ namespace Songhay.Social.Shell.Tests
 
             #endregion
 
+            bool filter(Favorites i)
+            {
+                return
+                    (i.Type == FavoritesType.Favorites) &&
+                    (i.IncludeEntities == false) &&
+                    (i.Count == 50)
+                    ;
+            }
+
             using (var ctx = new TwitterContext(this._authorizer))
             {
-                var favorites = ctx.Favorites
-                    .Where(i => i.Type == FavoritesType.Favorites)
-                    .Where(i => i.IncludeEntities == false)
-                    .Where(i => i.Count == 50)
-                    .ToList();
+                var favorites = ctx.Favorites.Where(filter).ToArray();
 
                 var count = favorites.Count();
                 Assert.IsTrue(count > 0, "The expected favorites count is not here");
