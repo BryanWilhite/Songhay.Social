@@ -5,9 +5,11 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Songhay.Social.Models", "Songhay.Social.Models\Songhay.Social.Models.csproj", "{6ECE20FB-7BF5-440B-B638-4544AE686B43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Songhay.Social.ModelContext", "Songhay.Social.ModelContext\Songhay.Social.ModelContext.csproj", "{C2B8ED7F-069D-4672-AF09-F7C73DD1E03B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Songhay.Social.ModelContext", "Songhay.Social.ModelContext\Songhay.Social.ModelContext.csproj", "{C2B8ED7F-069D-4672-AF09-F7C73DD1E03B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Songhay.Social.Shell.Tests", "Songhay.Social.Shell.Tests\Songhay.Social.Shell.Tests.csproj", "{B735F3F0-735D-4850-804D-8B404B34D09F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Songhay.Social.Shell.Tests", "Songhay.Social.Shell.Tests\Songhay.Social.Shell.Tests.csproj", "{B735F3F0-735D-4850-804D-8B404B34D09F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Songhay.Social", "Songhay.Social\Songhay.Social.csproj", "{D2898121-7861-4886-BA99-8742496FF285}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,18 @@ Global
 		{B735F3F0-735D-4850-804D-8B404B34D09F}.Release|x64.Build.0 = Release|Any CPU
 		{B735F3F0-735D-4850-804D-8B404B34D09F}.Release|x86.ActiveCfg = Release|Any CPU
 		{B735F3F0-735D-4850-804D-8B404B34D09F}.Release|x86.Build.0 = Release|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Debug|x64.Build.0 = Debug|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Debug|x86.Build.0 = Debug|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Release|x64.ActiveCfg = Release|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Release|x64.Build.0 = Release|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Release|x86.ActiveCfg = Release|Any CPU
+		{D2898121-7861-4886-BA99-8742496FF285}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
