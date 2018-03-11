@@ -1,21 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Songhay.Models;
 
 namespace Songhay.Social
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup" /> class.
+        /// </summary>
+        /// <param name="env">The env.</param>
+        /// <param name="configuration">The configuration.</param>
+        public Startup(IHostingEnvironment env, IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.hostingEnvironment = env;
+            this.Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -23,7 +24,13 @@ namespace Songhay.Social
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            var meta = new ProgramMetadata();
+            this.Configuration.Bind(nameof(ProgramMetadata), meta);
+
+            services
+                .AddSingleton(typeof(ProgramMetadata), meta)
+                .AddMvc()
+                ;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,5 +43,7 @@ namespace Songhay.Social
 
             app.UseMvc();
         }
+
+        readonly IHostingEnvironment hostingEnvironment;
     }
 }

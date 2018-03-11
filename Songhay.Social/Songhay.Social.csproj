@@ -9,11 +9,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="linqtotwitter" Version="4.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="SonghayCore" Version="2.7.3" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Songhay.Social.ModelContext\Songhay.Social.ModelContext.csproj" />
+    <ProjectReference Include="..\Songhay.Social.Models\Songhay.Social.Models.csproj" />
   </ItemGroup>
 
 </Project>

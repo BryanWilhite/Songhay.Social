@@ -1,25 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Runtime.CompilerServices;
 
-namespace Songhay.Social
+[assembly: InternalsVisibleTo(assemblyName: "Songhay.GenericWeb.Tests")]
+
+namespace Songhay.GenericWeb
 {
+    /// <summary>
+    /// Defines the conventional ASP.NET Program
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// The conventional main method.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            GetWebHostBuilder(args, builderAction: null).Build().Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        internal static IWebHostBuilder GetWebHostBuilder() =>
+            GetWebHostBuilder(args: null, builderAction: null)
+            ;
+
+        internal static IWebHostBuilder GetWebHostBuilder(string[] args, Action<WebHostBuilderContext, IConfigurationBuilder> builderAction)
+            => WebHost
+                .CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((builderContext, configBuilder) =>
+                {
+                    builderAction?.Invoke(builderContext, configBuilder);
+                    configBuilder.AddJsonFile("app-settings.songhay-system.json", optional: false);
+                })
                 .UseStartup<Startup>()
-                .Build();
+                ;
     }
 }
