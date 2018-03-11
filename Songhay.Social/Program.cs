@@ -4,9 +4,9 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo(assemblyName: "Songhay.GenericWeb.Tests")]
+[assembly: InternalsVisibleTo(assemblyName: "Songhay.Social.Tests")]
 
-namespace Songhay.GenericWeb
+namespace Songhay.Social
 {
     /// <summary>
     /// Defines the conventional ASP.NET Program

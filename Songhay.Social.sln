@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Songhay.Social.Shell.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Songhay.Social", "Songhay.Social\Songhay.Social.csproj", "{D2898121-7861-4886-BA99-8742496FF285}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Songhay.Social.Tests", "Songhay.Social.Tests\Songhay.Social.Tests.csproj", "{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{D2898121-7861-4886-BA99-8742496FF285}.Release|x64.Build.0 = Release|Any CPU
 		{D2898121-7861-4886-BA99-8742496FF285}.Release|x86.ActiveCfg = Release|Any CPU
 		{D2898121-7861-4886-BA99-8742496FF285}.Release|x86.Build.0 = Release|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Debug|x64.Build.0 = Debug|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Debug|x86.Build.0 = Debug|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Release|x64.ActiveCfg = Release|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Release|x64.Build.0 = Release|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Release|x86.ActiveCfg = Release|Any CPU
+		{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
