@@ -5,12 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="linqtotwitter" Version="4.2.1" />
-    <PackageReference Include="SonghayCore" Version="2.7.3" />
+    <PackageReference Include="linqtotwitter" Version="5.0.0-beta1" />
+    <PackageReference Include="SonghayCore" Version="2.7.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Songhay.Social.Models\Songhay.Social.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>

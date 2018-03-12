@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Songhay.Extensions;
 using Songhay.Models;
 using Songhay.Social.ModelContext;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -19,9 +21,11 @@ namespace Songhay.Social.Controllers
         [Route("twitter-favorites")]
         public IActionResult GetTwitterFavorites()
         {
-            var set = this._metadata.RestApiMetadataSet["SocialTwitter"];
-            var authorizer = SocialContext.GetTwitterCredentialsAndAuthorizer(configurationData: set);
-            var favorites = SocialContext.GetTwitterFavorites(authorizer);
+            var restApiMetadata = this._metadata.RestApiMetadataSet["SocialTwitter"];
+            var profileImageBaseUri = new Uri(restApiMetadata.ClaimsSet["TwitterProfileImageRoot"], UriKind.Absolute);
+
+            var authorizer = SocialContext.GetTwitterCredentialsAndAuthorizer(restApiMetadata.ClaimsSet.ToNameValueCollection());
+            var favorites = SocialContext.GetTwitterFavorites(authorizer, profileImageBaseUri);
             return this.Ok(favorites);
         }
 
