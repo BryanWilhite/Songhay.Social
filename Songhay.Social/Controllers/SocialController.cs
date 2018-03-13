@@ -14,7 +14,7 @@ namespace Songhay.Social.Controllers
     /// Controls social media API(s)
     /// </summary>
     /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
-    [Route("api/[controller]")]
+    [Route("api/[controller]/v1")]
     public class SocialController : Controller
     {
         /// <summary>
