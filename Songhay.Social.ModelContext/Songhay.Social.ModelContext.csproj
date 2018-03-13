@@ -13,8 +13,4 @@
     <ProjectReference Include="..\Songhay.Social.Models\Songhay.Social.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
 </Project>
