@@ -57,7 +57,7 @@ namespace Songhay.Social.Shell.Tests
 
         [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
         [TestCategory("Integration")]
-        [TestProperty("friendshipType", "FriendshipType.FollowersList")]
+        [TestProperty("friendshipType", "FollowersList")]
         [TestProperty("pageSize", "10")] //increasing this value might exceed quota
         [TestProperty("screenName", "KinteSpace")]
         [TestMethod]
