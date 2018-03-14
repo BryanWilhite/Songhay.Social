@@ -1,7 +1,9 @@
 using LinqToTwitter;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Songhay.Extensions;
 using Songhay.Models;
+using Songhay.Social.ModelContext.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +21,21 @@ namespace Songhay.Social.Shell.Tests
         [TestInitialize]
         public void InitializeTest()
         {
-            var data = new OpenAuthorizationData();
+            var targetDirectoryInfo = this.TestContext.ShouldGetConventionalProjectDirectoryInfo(this.GetType());
+            var basePath = targetDirectoryInfo.FullName;
+            var meta = new ProgramMetadata();
+            var configuration = this.TestContext.ShouldLoadConfigurationFromConventionalProject(this.GetType(), b =>
+            {
+                b.AddJsonFile("./app-settings.songhay-system.json", optional: false, reloadOnChange: false);
+                b.SetBasePath(basePath);
+                return b;
+            });
+            configuration.Bind(nameof(ProgramMetadata), meta);
+            this.TestContext.WriteLine($"{meta}");
+
+            var restApiMetadata = meta.ToSocialTwitterRestApiMetadata();
+
+            var data = new OpenAuthorizationData(restApiMetadata.ClaimsSet.ToNameValueCollection());
 
             this._authorizer = new SingleUserAuthorizer
             {
@@ -39,12 +55,21 @@ namespace Songhay.Social.Shell.Tests
         ///</summary>
         public TestContext TestContext { get; set; }
 
-        [Ignore("This test requires manual authorization so it should not be run on a CI/CD server.")]
+        [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
         [TestCategory("Integration")]
+        [TestProperty("friendshipType", "FriendshipType.FollowersList")]
+        [TestProperty("pageSize", "10")] //increasing this value might exceed quota
+        [TestProperty("screenName", "KinteSpace")]
         [TestMethod]
-        public void ShouldUseLinqToTwitterToFindInactiveAccounts()
+        public void ShouldSearchByScreenNameAndFriendshipType()
         {
-            //https://linqtotwitter.codeplex.com/wikipage?title=Showing%20Friends
+            #region test properties:
+
+            var friendshipType = Enum.Parse<FriendshipType>(this.TestContext.Properties["friendshipType"].ToString());
+            var pageSize = Convert.ToInt32(this.TestContext.Properties["pageSize"]);
+            var screenName = this.TestContext.Properties["screenName"].ToString();
+
+            #endregion
 
             using (var ctx = new TwitterContext(this._authorizer))
             {
@@ -53,9 +78,9 @@ namespace Songhay.Social.Shell.Tests
                 {
                     var friendship = ctx.Friendship
                         .Where(i =>
-                            (i.Type == FriendshipType.FollowersList) &&
-                            (i.ScreenName == "KinteSpace") &&
-                            (i.Count == 1000) &&
+                            (i.Type == friendshipType) &&
+                            (i.ScreenName == screenName) &&
+                            (i.Count == pageSize) &&
                             (i.Cursor == cursor))
                         .Single();
 
@@ -65,37 +90,61 @@ namespace Songhay.Social.Shell.Tests
 
                     cursor = friendship.CursorMovement.Next;
 
-                    friendship.Users.ForEachInEnumerable(i => this.TestContext.WriteLine("{0}", i.ScreenNameResponse));
+                    friendship.Users.ForEachInEnumerable(i => this.TestContext.WriteLine($"{i.ScreenNameResponse}"));
 
                 } while (cursor != 0);
             }
         }
 
-        [Ignore("This test requires manual authorization so it should not be run on a CI/CD server.")]
+        [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
+        [TestMethod]
+        [TestProperty("screenNameList", "pluralsight,jongalloway")]
+        public void ShouldSearchByScreenNameList()
+        {
+            #region test properties:
+
+            var screenNameList = this.TestContext.Properties["screenNameList"].ToString();
+
+            #endregion
+
+            using (var ctx = new TwitterContext(this._authorizer))
+            {
+                var query = ctx.User
+                    .Where(i => i.Type == UserType.Lookup)
+                    .Where(i => i.ScreenNameList == screenNameList);
+
+                var users = query.ToArray();
+                Assert.IsNotNull(users, "The expected user set is not here.");
+                Assert.IsTrue(users.Any(), "The expected users are not here.");
+
+                users.ForEachInEnumerable(i => this.TestContext.WriteLine($"{i.ScreenName}"));
+            }
+        }
+
+        [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
         [TestCategory("Integration")]
         [TestMethod]
-        public void ShouldUseLinqToTwitterToReadFavoritesWithSingleUserAuthorizer()
+        [TestProperty("count", "50")]
+        public void ShouldSearchForFavoritesByCount()
         {
+            #region test properties:
+
+            var count = Convert.ToInt32(this.TestContext.Properties["count"]);
+
+            #endregion
+
             using (var ctx = new TwitterContext(this._authorizer))
             {
                 var query = ctx.Favorites.Where(i =>
                     (i.Type == FavoritesType.Favorites) &&
                     (i.IncludeEntities == false) &&
-                    (i.Count == 50));
+                    (i.Count == count));
 
-                var favorites = query.ToList();
-                Assert.IsNotNull(favorites, "The expected favorites are not here.");
+                var favorites = query.ToArray();
+                Assert.IsNotNull(favorites, "The expected favorite set is not here.");
+                Assert.IsTrue(favorites.Any(), "The expected favorites are not here.");
 
-                var count = favorites.Count();
-                Assert.IsTrue(count > 0, "The expected count is not here");
-
-                var userNames = new[] { "pluralsight", "jongalloway" };
-                var query2 = ctx.User
-                    .Where(i => i.Type == UserType.Lookup)
-                    .Where(i => i.ScreenNameList == string.Join(",", userNames));
-
-                var user = query2.ToList();
-                Assert.IsNotNull(user, "The expected user is not here.");
+                favorites.ForEachInEnumerable(i => this.TestContext.WriteLine($"{i.ScreenName}"));
             }
         }
 
