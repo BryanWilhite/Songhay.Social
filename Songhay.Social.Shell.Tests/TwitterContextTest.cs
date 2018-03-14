@@ -39,21 +39,12 @@ namespace Songhay.Social.Shell.Tests
         ///</summary>
         public TestContext TestContext { get; set; }
 
+        [Ignore("This test requires manual authorization so it should not be run on a CI/CD server.")]
         [TestCategory("Integration")]
         [TestMethod]
         public void ShouldUseLinqToTwitterToFindInactiveAccounts()
         {
             //https://linqtotwitter.codeplex.com/wikipage?title=Showing%20Friends
-
-            Func<Friendship, long, bool> filter = (i, cursor) =>
-            {
-                return
-                    (i.Type == FriendshipType.FollowersList) &&
-                    (i.ScreenName == "KinteSpace") &&
-                    (i.Count == 1000) &&
-                    (i.Cursor == cursor)
-                    ;
-            };
 
             using (var ctx = new TwitterContext(this._authorizer))
             {
@@ -61,7 +52,11 @@ namespace Songhay.Social.Shell.Tests
                 do
                 {
                     var friendship = ctx.Friendship
-                        .Where(i => filter(i, cursor))
+                        .Where(i =>
+                            (i.Type == FriendshipType.FollowersList) &&
+                            (i.ScreenName == "KinteSpace") &&
+                            (i.Count == 1000) &&
+                            (i.Cursor == cursor))
                         .Single();
 
                     if (friendship == null) break;
@@ -76,22 +71,17 @@ namespace Songhay.Social.Shell.Tests
             }
         }
 
+        [Ignore("This test requires manual authorization so it should not be run on a CI/CD server.")]
         [TestCategory("Integration")]
         [TestMethod]
         public void ShouldUseLinqToTwitterToReadFavoritesWithSingleUserAuthorizer()
         {
-            bool filter(Favorites i)
-            {
-                return
-                    (i.Type == FavoritesType.Favorites) &&
-                    (i.IncludeEntities == false) &&
-                    (i.Count == 50)
-                    ;
-            }
-
             using (var ctx = new TwitterContext(this._authorizer))
             {
-                var query = ctx.Favorites.Where(filter);
+                var query = ctx.Favorites.Where(i =>
+                    (i.Type == FavoritesType.Favorites) &&
+                    (i.IncludeEntities == false) &&
+                    (i.Count == 50));
 
                 var favorites = query.ToList();
                 Assert.IsNotNull(favorites, "The expected favorites are not here.");
@@ -106,85 +96,6 @@ namespace Songhay.Social.Shell.Tests
 
                 var user = query2.ToList();
                 Assert.IsNotNull(user, "The expected user is not here.");
-            }
-        }
-
-        [TestCategory("Integration")]
-        [TestMethod]
-        [TestProperty("profileImageFolder", @"AzureBlobStorage-songhay\shared-social-twitter\")]
-        [TestProperty("screenNames", "BryanWilhite,Kintespace")]
-        public void ShouldUseLinqToTwitterToWriteProfileImages()
-        {
-            var projectsRoot = this.TestContext.ShouldGetAssemblyDirectoryInfo(this.GetType())
-                ?.Parent
-                ?.Parent
-                ?.Parent
-                ?.FullName;
-            this.TestContext.ShouldFindDirectory(projectsRoot);
-
-            #region test properties:
-
-            var profileImageFolder = this.TestContext.Properties["profileImageFolder"].ToString();
-            profileImageFolder = Path.Combine(projectsRoot, profileImageFolder);
-            this.TestContext.ShouldFindDirectory(profileImageFolder);
-
-            var screenNames = this.TestContext.Properties["screenNames"].ToString().Split(',');
-            Assert.IsTrue(screenNames.Any(), "The expected screen names are not here.");
-
-            #endregion
-
-            bool filter(Favorites i)
-            {
-                return
-                    (i.Type == FavoritesType.Favorites) &&
-                    (i.IncludeEntities == false) &&
-                    (i.Count == 50)
-                    ;
-            }
-
-            using (var ctx = new TwitterContext(this._authorizer))
-            {
-                var favorites = ctx.Favorites.Where(filter).ToArray();
-
-                var count = favorites.Count();
-                Assert.IsTrue(count > 0, "The expected favorites count is not here");
-
-                var usersFromFavorites = favorites.Select(i => i.User).ToList();
-
-                count = usersFromFavorites.Count();
-                Assert.IsTrue(count > 0, "The expected favorites user count is not here");
-
-                var usersFromFollowing = new List<User>();
-                screenNames.ForEachInEnumerable(screenName =>
-                {
-                    var users = ctx.Friendship
-                        .Where(i => i.Type == FriendshipType.FriendsList)
-                        .Where(i => i.ScreenName == screenName)
-                        .Where(i => i.Count == 500)
-                        .SelectMany(i => i.Users)
-                        .ToArray();
-                    usersFromFollowing.AddRange(users);
-                });
-
-                count = usersFromFollowing.Count();
-                Assert.IsTrue(count > 0, "The expected follower count is not here");
-
-                var profileImages = usersFromFavorites.Union(usersFromFollowing)
-                    .Select(i => new
-                    {
-                        ScreenName = i.ScreenNameResponse,
-                        ProfileImageUrl = i.ProfileImageUrl
-                    })
-                    .Distinct()
-                    .ToList();
-
-                profileImages.ForEachInEnumerable(i =>
-                {
-                    var uri = new Uri(i.ProfileImageUrl, UriKind.Absolute);
-                    var target = profileImageFolder + i.ScreenName + "." + uri.Segments.Last().Split('.').Last().ToLower();
-                    this.TestContext.WriteLine("writing {0}...", target);
-                    WebRequest.CreateHttp(uri).DownloadToFile(target);
-                });
             }
         }
 
