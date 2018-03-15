@@ -8,16 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 
 namespace Songhay.Social.Shell.Tests
 {
     [TestClass]
     public class TwitterContextTest
     {
-        /// <summary>
-        /// Initializes the test.
-        /// </summary>
         [TestInitialize]
         public void InitializeTest()
         {
@@ -49,10 +45,6 @@ namespace Songhay.Social.Shell.Tests
             };
         }
 
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
         public TestContext TestContext { get; set; }
 
         [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
@@ -141,6 +133,7 @@ namespace Songhay.Social.Shell.Tests
             }
         }
 
+        [Ignore("This is itnded to run manually.")]
         [TestCategory("Integration")]
         [TestMethod]
         [TestProperty("profileImageFolder", @"SonghaySystem\AzureBlobStorage-songhay\shared-social-twitter\")]
