@@ -117,7 +117,7 @@ namespace Songhay.Social.Shell.Tests
                 Assert.IsNotNull(users, "The expected user set is not here.");
                 Assert.IsTrue(users.Any(), "The expected users are not here.");
 
-                users.ForEachInEnumerable(i => this.TestContext.WriteLine($"{i.ScreenName}"));
+                users.ForEachInEnumerable(i => this.TestContext.WriteLine($"{i.ScreenNameResponse}"));
             }
         }
 
@@ -133,18 +133,70 @@ namespace Songhay.Social.Shell.Tests
 
             #endregion
 
-            using (var ctx = new TwitterContext(this._authorizer))
+            using (var context = new TwitterContext(this._authorizer))
             {
-                var query = ctx.Favorites.Where(i =>
-                    (i.Type == FavoritesType.Favorites) &&
-                    (i.IncludeEntities == false) &&
-                    (i.Count == count));
-
-                var favorites = query.ToArray();
-                Assert.IsNotNull(favorites, "The expected favorite set is not here.");
+                var favorites = context.ToFavorites(count, includeEntities: false);
                 Assert.IsTrue(favorites.Any(), "The expected favorites are not here.");
+                favorites.ForEachInEnumerable(i => this.TestContext.WriteLine($"{i.User.ScreenNameResponse}"));
+            }
+        }
 
-                favorites.ForEachInEnumerable(i => this.TestContext.WriteLine($"{i.ScreenName}"));
+        [TestCategory("Integration")]
+        [TestMethod]
+        [TestProperty("profileImageFolder", @"SonghaySystem\AzureBlobStorage-songhay\shared-social-twitter\")]
+        [TestProperty("screenNameList", "BryanWilhite,Kintespace")]
+        [TestProperty("count", "50")]
+        public void ShouldWriteProfileImages()
+        {
+            var root = this.TestContext.ShouldGetAssemblyDirectoryParent(this.GetType(), expectedLevels: 6);
+
+            #region test properties:
+
+            var profileImageFolder = Path.Combine(root, this.TestContext.Properties["profileImageFolder"].ToString());
+            this.TestContext.ShouldFindDirectory(profileImageFolder);
+
+            var screenNameList = this.TestContext.Properties["screenNameList"].ToString().Split(',');
+            var count = Convert.ToInt32(this.TestContext.Properties["count"]);
+
+            #endregion
+
+            using (var context = new TwitterContext(this._authorizer))
+            {
+                var favorites = context.ToFavorites(count, includeEntities: false);
+                Assert.IsTrue(favorites.Any(), "The expected favorites are not here");
+
+                var usersFromFavorites = favorites.Select(i => i.User).ToList();
+                Assert.IsTrue(usersFromFavorites.Any(), "The expected favorites users are not here");
+
+                var usersFromFollowing = new List<User>();
+                screenNameList.ForEachInEnumerable(screenName =>
+                {
+                    var users = context.ToUsersByScreenName(screenName, count: 500);
+                    usersFromFollowing.AddRange(users);
+                });
+
+                Assert.IsTrue(usersFromFollowing.Any(), "The expected followers are not here");
+
+                var profileImages = usersFromFavorites.Union(usersFromFollowing)
+                    .Select(i => new
+                    {
+                        ScreenName = i.ScreenNameResponse,
+                        i.ProfileImageUrl
+                    })
+                    .Distinct()
+                    .ToArray();
+
+                profileImages.ForEachInEnumerable(i =>
+                {
+                    var uri = new Uri(i.ProfileImageUrl, UriKind.Absolute);
+                    var target = string.Concat(
+                        profileImageFolder,
+                        i.ScreenName, ".",
+                        uri.Segments.Last().Split('.').Last().ToLower()
+                        );
+                    this.TestContext.WriteLine("writing {0}...", target);
+                    //WebRequest.CreateHttp(uri).DownloadToFile(target);
+                });
             }
         }
 

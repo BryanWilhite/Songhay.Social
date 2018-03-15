@@ -1,5 +1,6 @@
 ﻿using LinqToTwitter;
 using Songhay.Models;
+using Songhay.Social.ModelContext.Extensions;
 using Songhay.Social.Models;
 using System;
 using System.Collections.Generic;
@@ -30,14 +31,11 @@ namespace Songhay.Social.ModelContext
 
         public static IEnumerable<TwitterFavorite> GetTwitterFavorites(IAuthorizer authorizer, Uri profileImageBaseUri)
         {
-            var ctx = new TwitterContext(authorizer);
-
-            var data = ctx.Favorites
-                .Where(i =>
-                    (i.Type == FavoritesType.Favorites) &&
-                    (i.Count == 50) &&
-                    (i.IncludeEntities == true))
-                .ToArray();
+            var data = Enumerable.Empty<Favorites>();
+            using (var context = new TwitterContext(authorizer))
+            {
+                data = context.ToFavorites(count: 50, includeEntities: true);
+            }
 
             if ((data == null) || !data.Any()) return Enumerable.Empty<TwitterFavorite>();
 
