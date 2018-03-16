@@ -8,12 +8,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Songhay.Social.Shell.Tests
 {
     [TestClass]
     public class TwitterContextTest
     {
+        static TwitterContextTest()
+        {
+            httpClient = new HttpClient();
+        }
+
         [TestInitialize]
         public void InitializeTest()
         {
@@ -136,10 +143,10 @@ namespace Songhay.Social.Shell.Tests
         [Ignore("This is itnded to run manually.")]
         [TestCategory("Integration")]
         [TestMethod]
-        [TestProperty("profileImageFolder", @"SonghaySystem\AzureBlobStorage-songhay\shared-social-twitter\")]
+        [TestProperty("profileImageFolder", @"azure-storage-accounts\songhay\shared-social-twitter\")]
         [TestProperty("screenNameList", "BryanWilhite,Kintespace")]
         [TestProperty("count", "50")]
-        public void ShouldWriteProfileImages()
+        public async Task ShouldWriteProfileImages()
         {
             var root = this.TestContext.ShouldGetAssemblyDirectoryParent(this.GetType(), expectedLevels: 6);
 
@@ -179,7 +186,7 @@ namespace Songhay.Social.Shell.Tests
                     .Distinct()
                     .ToArray();
 
-                profileImages.ForEachInEnumerable(i =>
+                foreach (var i in profileImages)
                 {
                     var uri = new Uri(i.ProfileImageUrl, UriKind.Absolute);
                     var target = string.Concat(
@@ -187,11 +194,25 @@ namespace Songhay.Social.Shell.Tests
                         i.ScreenName, ".",
                         uri.Segments.Last().Split('.').Last().ToLower()
                         );
-                    this.TestContext.WriteLine("writing {0}...", target);
-                    //WebRequest.CreateHttp(uri).DownloadToFile(target);
-                });
+                    this.TestContext.WriteLine($"writing {target}...");
+
+                    var buffer = new byte[32768];
+                    var bytesRead = 0;
+                    var fileName = Path.GetFileName(target);
+
+                    var stream = await httpClient.GetStreamAsync(uri);
+                    try
+                    {
+                    }
+                    finally
+                    {
+                        stream?.Close();
+                    }
+                }
             }
         }
+
+        static readonly HttpClient httpClient;
 
         IAuthorizer _authorizer;
     }
