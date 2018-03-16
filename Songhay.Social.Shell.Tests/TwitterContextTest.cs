@@ -195,19 +195,7 @@ namespace Songhay.Social.Shell.Tests
                         uri.Segments.Last().Split('.').Last().ToLower()
                         );
                     this.TestContext.WriteLine($"writing {target}...");
-
-                    var buffer = new byte[32768];
-                    var bytesRead = 0;
-                    var fileName = Path.GetFileName(target);
-
-                    var stream = await httpClient.GetStreamAsync(uri);
-                    try
-                    {
-                    }
-                    finally
-                    {
-                        stream?.Close();
-                    }
+                    await httpClient.DownloadToFileAsync(uri, target);
                 }
             }
         }
