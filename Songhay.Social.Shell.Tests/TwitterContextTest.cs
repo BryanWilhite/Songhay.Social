@@ -21,6 +21,8 @@ namespace Songhay.Social.Shell.Tests
             httpClient = new HttpClient();
         }
 
+        public TestContext TestContext { get; set; }
+
         [TestInitialize]
         public void InitializeTest()
         {
@@ -52,7 +54,29 @@ namespace Songhay.Social.Shell.Tests
             };
         }
 
-        public TestContext TestContext { get; set; }
+        [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
+        [TestCategory("Integration")]
+        [TestMethod]
+        [TestProperty("count", "50")]
+        public void ShouldQueryFavoritesByCount()
+        {
+            #region test properties:
+
+            var count = Convert.ToInt32(this.TestContext.Properties["count"]);
+
+            #endregion
+
+            using (var context = new TwitterContext(this._authorizer))
+            {
+                var favorites = context.ToFavorites(count, includeEntities: false);
+                Assert.IsTrue(favorites.Any(), "The expected favorites are not here.");
+                favorites.ForEachInEnumerable(i => this.TestContext.WriteLine($@"
+{nameof(i.User.ScreenNameResponse)}: {i.User.ScreenNameResponse}
+{nameof(i.ID)}: {i.ID}
+{nameof(i.StatusID)}: {i.StatusID}
+"));
+            }
+        }
 
         [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
         [TestCategory("Integration")]
@@ -60,7 +84,7 @@ namespace Songhay.Social.Shell.Tests
         [TestProperty("pageSize", "10")] //increasing this value might exceed quota
         [TestProperty("screenName", "KinteSpace")]
         [TestMethod]
-        public void ShouldSearchByScreenNameAndFriendshipType()
+        public void ShouldQueryFriendshipByScreenName()
         {
             #region test properties:
 
@@ -96,9 +120,41 @@ namespace Songhay.Social.Shell.Tests
         }
 
         [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
+        [TestCategory("Integration")]
+        [TestMethod]
+        [TestProperty("statusId", "964573153082064896")]
+        public void ShouldQueryStatusByStatusId()
+        {
+            #region test properties:
+
+            var statusId = Convert.ToUInt64(this.TestContext.Properties["statusId"]);
+
+            #endregion
+
+            using (var context = new TwitterContext(this._authorizer))
+            {
+                var query = context.Status.Where(i =>
+                    (i.Type == StatusType.Show) &&
+                    (i.TweetMode == TweetMode.Extended) &&
+                    (i.IncludeEntities == true) &&
+                    (i.ID == statusId));
+
+                var status = query.Single();
+                Assert.IsNotNull(status, "The expected status is not here.");
+                this.TestContext.WriteLine($@"
+{nameof(status.ID)}: {status.ID}
+{nameof(status.StatusID)}: {status.StatusID}
+{nameof(status.User.ScreenNameResponse)}: {status.User.ScreenNameResponse}
+{nameof(status.Text)}: {status.Text}
+{nameof(status.FullText)}: {status.FullText}
+");
+            }
+        }
+
+        [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
         [TestMethod]
         [TestProperty("screenNameList", "pluralsight,jongalloway")]
-        public void ShouldSearchByScreenNameList()
+        public void ShouldQueryUsersByScreenNameList()
         {
             #region test properties:
 
@@ -106,11 +162,11 @@ namespace Songhay.Social.Shell.Tests
 
             #endregion
 
-            using (var ctx = new TwitterContext(this._authorizer))
+            using (var context = new TwitterContext(this._authorizer))
             {
-                var query = ctx.User
-                    .Where(i => i.Type == UserType.Lookup)
-                    .Where(i => i.ScreenNameList == screenNameList);
+                var query = context.User.Where(i =>
+                    (i.Type == UserType.Lookup) &&
+                    (i.ScreenNameList == screenNameList));
 
                 var users = query.ToArray();
                 Assert.IsNotNull(users, "The expected user set is not here.");
@@ -120,27 +176,7 @@ namespace Songhay.Social.Shell.Tests
             }
         }
 
-        [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
-        [TestCategory("Integration")]
-        [TestMethod]
-        [TestProperty("count", "50")]
-        public void ShouldSearchForFavoritesByCount()
-        {
-            #region test properties:
-
-            var count = Convert.ToInt32(this.TestContext.Properties["count"]);
-
-            #endregion
-
-            using (var context = new TwitterContext(this._authorizer))
-            {
-                var favorites = context.ToFavorites(count, includeEntities: false);
-                Assert.IsTrue(favorites.Any(), "The expected favorites are not here.");
-                favorites.ForEachInEnumerable(i => this.TestContext.WriteLine($"{i.User.ScreenNameResponse}"));
-            }
-        }
-
-        [Ignore("This is itnded to run manually.")]
+        [Ignore("This test is intended to run manually.")]
         [TestCategory("Integration")]
         [TestMethod]
         [TestProperty("profileImageFolder", @"azure-storage-accounts\songhay\shared-social-twitter\")]
@@ -148,7 +184,7 @@ namespace Songhay.Social.Shell.Tests
         [TestProperty("count", "50")]
         public async Task ShouldWriteProfileImages()
         {
-            var root = this.TestContext.ShouldGetAssemblyDirectoryParent(this.GetType(), expectedLevels: 6);
+            var root = this.TestContext.ShouldGetAssemblyDirectoryParent(this.GetType(), expectedLevels: 5);
 
             #region test properties:
 
@@ -203,5 +239,6 @@ namespace Songhay.Social.Shell.Tests
         static readonly HttpClient httpClient;
 
         IAuthorizer _authorizer;
+
     }
 }
