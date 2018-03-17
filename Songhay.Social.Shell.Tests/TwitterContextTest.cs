@@ -152,6 +152,40 @@ namespace Songhay.Social.Shell.Tests
         }
 
         [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
+        [TestCategory("Integration")]
+        [TestMethod]
+        [TestProperty("statusIds", "973322161426436097,964573153082064896,964534393464283137,963909405053018112,963841864011886592,963599531370844160,963291791448510464,963277605834248197,962749324126863360,962683197812338688")]
+        public void ShouldQueryStatusesByStatusIds()
+        {
+            #region test properties:
+
+            var statusIds = this.TestContext.Properties["statusIds"]
+                .ToString()
+                .Split(',')
+                .Select(i => Convert.ToUInt64(i));
+
+            #endregion
+
+            using (var context = new TwitterContext(this._authorizer))
+            {
+                var statuses = context.ToStatuses(statusIds, TweetMode.Extended, includeEntities: true);
+                Assert.IsNotNull(statuses, "The expected status set is not here.");
+                Assert.IsTrue(statuses.Any(), "The expected statuses are not here.");
+                statuses.ForEachInEnumerable(i =>
+                {
+
+                    this.TestContext.WriteLine($@"
+{nameof(i.ID)}: {i.ID}
+{nameof(i.StatusID)}: {i.StatusID}
+{nameof(i.User.ScreenNameResponse)}: {i.User.ScreenNameResponse}
+{nameof(i.Text)}: {i.Text}
+{nameof(i.FullText)}: {i.FullText}
+");
+                });
+            }
+        }
+
+        [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
         [TestMethod]
         [TestProperty("screenNameList", "pluralsight,jongalloway")]
         public void ShouldQueryUsersByScreenNameList()

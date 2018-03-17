@@ -1,0 +1,25 @@
+﻿using LinqToTwitter;
+using Songhay.Extensions;
+using System;
+using System.Linq;
+
+namespace Songhay.Social.Models
+{
+    public class TwitterStatus : Status
+    {
+        public TwitterStatus(Status data, Uri baseUri)
+        {
+            if (data == null) throw new NullReferenceException("The expected Twitter status is not here.");
+            if (baseUri == null) throw new NullReferenceException("The expected base URI is not here.");
+
+            var uri = new Uri(data.User.ProfileImageUrl, UriKind.Absolute);
+            var lastSegment = uri.Segments.Last().Split('.').Last().ToLower();
+            var uriBuilder = new UriBuilder(baseUri).WithPath($"{data.User.ScreenNameResponse}.{lastSegment}");
+
+            this.ProfileImageUrl = uriBuilder.Uri.OriginalString;
+            FrameworkTypeUtility.SetProperties(data, this);
+        }
+
+        public string ProfileImageUrl { get; private set; }
+    }
+}

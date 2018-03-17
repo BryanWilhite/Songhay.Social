@@ -37,7 +37,7 @@ namespace Songhay.Social.Controllers
         [Route("twitter-favorites")]
         public IActionResult GetTwitterFavorites()
         {
-            var favorites = SocialContext.GetTwitterFavorites(this.twitterAuthorizer, this.profileImageBaseUri);
+            var favorites = SocialContext.GetTwitterStatuses(this.twitterAuthorizer, this.profileImageBaseUri);
             return this.Ok(favorites);
         }
 

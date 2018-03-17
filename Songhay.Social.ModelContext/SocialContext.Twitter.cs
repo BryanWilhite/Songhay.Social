@@ -1,4 +1,5 @@
 ﻿using LinqToTwitter;
+using Songhay.Extensions;
 using Songhay.Models;
 using Songhay.Social.ModelContext.Extensions;
 using Songhay.Social.Models;
@@ -29,17 +30,21 @@ namespace Songhay.Social.ModelContext
             return authorizer;
         }
 
-        public static IEnumerable<TwitterFavorite> GetTwitterFavorites(IAuthorizer authorizer, Uri profileImageBaseUri)
+        public static IEnumerable<TwitterStatus> GetTwitterStatuses(IAuthorizer authorizer, Uri profileImageBaseUri)
         {
-            var data = Enumerable.Empty<Favorites>();
+            var data = new List<Status>();
             using (var context = new TwitterContext(authorizer))
             {
-                data = context.ToFavorites(count: 50, includeEntities: true);
+                var ids = context.ToFavoriteStatusIds(count: 50);
+                ids.Partition(10).ForEachInEnumerable(i =>
+                {
+                    data.AddRange(context.ToStatuses(i, TweetMode.Extended, includeEntities: true));
+                });
             }
 
-            if ((data == null) || !data.Any()) return Enumerable.Empty<TwitterFavorite>();
+            if ((data == null) || !data.Any()) return Enumerable.Empty<TwitterStatus>();
 
-            var favorites = data.Select(i => new TwitterFavorite(i, profileImageBaseUri));
+            var favorites = data.Select(i => new TwitterStatus(i, profileImageBaseUri));
             return favorites;
         }
     }
