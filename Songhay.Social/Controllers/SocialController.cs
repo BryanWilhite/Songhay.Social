@@ -34,11 +34,11 @@ namespace Songhay.Social.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(ICollection<Models.TwitterFavorite>), (int)HttpStatusCode.OK)]
-        [Route("twitter-favorites")]
-        public IActionResult GetTwitterFavorites()
+        [Route("twitter-statuses")]
+        public IActionResult GetTwitterStatuses()
         {
-            var favorites = SocialContext.GetTwitterStatuses(this.twitterAuthorizer, this.profileImageBaseUri);
-            return this.Ok(favorites);
+            var statuses = SocialContext.GetTwitterStatuses(this.twitterAuthorizer, this.profileImageBaseUri);
+            return this.Ok(statuses);
         }
 
         readonly IAuthorizer twitterAuthorizer;
