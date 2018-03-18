@@ -33,7 +33,7 @@ namespace Songhay.Social.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(ICollection<Models.TwitterFavorite>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ICollection<Models.TwitterStatus>), (int)HttpStatusCode.OK)]
         [Route("twitter-statuses")]
         public IActionResult GetTwitterStatuses()
         {
