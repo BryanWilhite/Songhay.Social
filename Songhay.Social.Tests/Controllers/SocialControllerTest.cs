@@ -56,7 +56,7 @@ namespace Songhay.Social.Tests.Controllers
 
         [TestCategory("Integration")]
         [TestMethod]
-        [TestProperty("pathTemplate", "twitter-favorites")]
+        [TestProperty("pathTemplate", "twitter-statuses")]
         public async Task ShouldGetTwitterFavorites()
         {
             #region test properties:
