@@ -41,7 +41,11 @@ namespace Songhay.Social
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app
+                .UseStaticFiles()
+                .UseDefaultFiles()
+                .UseMvc()
+                ;
         }
 
         readonly IHostingEnvironment hostingEnvironment;
