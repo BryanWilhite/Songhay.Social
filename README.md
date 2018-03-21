@@ -1,5 +1,7 @@
 # Songhay.Social
 
+![build badge](https://songhay.visualstudio.com/_apis/public/build/definitions/e6de8b87-c501-478d-8af5-b564cbd966cc/4/badge)
+
 [Songhay System](http://songhaysystem.com) consume the public APIs of social media products in order to track promotion and engagement. This repository “rolls up” all of the hooks into these APIs into one API.
 
 ## Twitter via LinqToTwitter
