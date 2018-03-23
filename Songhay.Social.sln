@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Songhay.Social.ModelContext
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Songhay.Social.Shell.Tests", "Songhay.Social.Shell.Tests\Songhay.Social.Shell.Tests.csproj", "{B735F3F0-735D-4850-804D-8B404B34D09F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Songhay.Social", "Songhay.Social\Songhay.Social.csproj", "{D2898121-7861-4886-BA99-8742496FF285}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Songhay.Social", "Songhay.Social\Songhay.Social.csproj", "{D2898121-7861-4886-BA99-8742496FF285}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Songhay.Social.Tests", "Songhay.Social.Tests\Songhay.Social.Tests.csproj", "{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Songhay.Social.Tests", "Songhay.Social.Tests\Songhay.Social.Tests.csproj", "{56E6ED55-6C52-4544-B3A4-4BBF9FC916FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

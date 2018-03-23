@@ -42,8 +42,8 @@ namespace Songhay.Social
             }
 
             app
-                .UseStaticFiles()
                 .UseDefaultFiles()
+                .UseStaticFiles()
                 .UseMvc()
                 ;
         }
