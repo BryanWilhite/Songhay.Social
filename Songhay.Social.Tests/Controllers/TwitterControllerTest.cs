@@ -10,7 +10,7 @@ using Tavis.UriTemplates;
 namespace Songhay.Social.Tests.Controllers
 {
     [TestClass]
-    public class SocialControllerTest
+    public class TwitterControllerTest
     {
         [TestInitialize]
         public void InitializeTest()
@@ -56,7 +56,7 @@ namespace Songhay.Social.Tests.Controllers
 
         [TestCategory("Integration")]
         [TestMethod]
-        [TestProperty("pathTemplate", "twitter-statuses")]
+        [TestProperty("pathTemplate", "statuses")]
         public async Task ShouldGetTwitterFavorites()
         {
             #region test properties:
@@ -72,7 +72,7 @@ namespace Songhay.Social.Tests.Controllers
             response.EnsureSuccessStatusCode();
         }
 
-        const string baseRoute = "api/social/v1/";
+        const string baseRoute = "twitter/v1/";
 
         ProgramMetadata _meta;
         TestServer _server;
