@@ -26,7 +26,8 @@ namespace Songhay.Social.ModelContext.Extensions
                 .Where(i =>
                     (i.Type == FavoritesType.Favorites) &&
                     (i.Count == count) &&
-                    (i.IncludeEntities == includeEntities))
+                    (i.IncludeEntities == includeEntities) &&
+                    (i.TweetMode == TweetMode.Extended))
                 .ToArray();
         }
 

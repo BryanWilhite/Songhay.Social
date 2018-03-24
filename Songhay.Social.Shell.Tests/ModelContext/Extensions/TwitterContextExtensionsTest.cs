@@ -75,6 +75,8 @@ namespace Songhay.Social.Shell.Tests.ModelContext.Extensions
 {nameof(i.User.ScreenNameResponse)}: {i.User.ScreenNameResponse}
 {nameof(i.ID)}: {i.ID}
 {nameof(i.StatusID)}: {i.StatusID}
+{nameof(i.Text)}: {i.Text}
+{nameof(i.FullText)}: {i.FullText}
 "));
             }
         }
