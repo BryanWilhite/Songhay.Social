@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Tavis.UriTemplates;
 
 namespace Songhay.Social.Shell.Tests
 {
@@ -36,7 +37,6 @@ namespace Songhay.Social.Shell.Tests
             configuration.Bind(nameof(ProgramMetadata), meta);
 
             restApiMetadata = meta.RestApiMetadataSet.TryGetValueWithKey("MicrosoftGraph", throwException: true);
-            app = new PublicClientApplication(restApiMetadata.ApiKey);
         }
 
         [Ignore("This is an experimental test that should be run manually.")]
@@ -45,6 +45,8 @@ namespace Songhay.Social.Shell.Tests
         {
             var scopes = restApiMetadata.ClaimsSet.TryGetValueWithKey("scopes", throwException: true).Split(',');
             AuthenticationResult authenticationResult = null;
+
+            var app = new PublicClientApplication(restApiMetadata.ApiKey);
             try
             {
                 await app.AcquireTokenSilentAsync(scopes, app.Users.FirstOrDefault());
@@ -58,7 +60,7 @@ namespace Songhay.Social.Shell.Tests
                 {
                     authenticationResult = await app.AcquireTokenAsync(scopes);
                 }
-                catch(NotImplementedException ex2)
+                catch (NotImplementedException ex2)
                 {
                     this.TestContext.WriteLine(ex2.StackTrace);
                     Assert.Inconclusive("The Login Screen we see on full .NET Framework is not supported on .NET Core");
@@ -85,11 +87,7 @@ namespace Songhay.Social.Shell.Tests
 
             var content = await response.Content.ReadAsStringAsync();
             this.TestContext.WriteLine($"token: {content}");
-        }
 
-        [TestMethod]
-        public void ShouldSignOutUser()
-        {
             try
             {
                 app.Remove(app.Users.FirstOrDefault());
@@ -102,10 +100,40 @@ namespace Songhay.Social.Shell.Tests
             Assert.IsFalse(app.Users.Any(), "User(s) are not expected.");
         }
 
+        [Ignore("This is an experimental test that should be run manually.")]
+        [TestMethod]
+        [TestProperty("redirectLocation", "https://localhost:44334/signin-oidc")]
+        [TestProperty("uriTemplateKey", "oauth2-authorization")]
+        public async Task ShouldGetAuthorizationCode()
+        {
+            #region test properties:
+
+            var redirectLocation = this.TestContext.Properties["redirectLocation"].ToString();
+            var uriTemplateKey = this.TestContext.Properties["uriTemplateKey"].ToString();
+
+            #endregion
+
+            var template = string.Concat(
+                restApiMetadata.ClaimsSet.TryGetValueWithKey("authority"),
+                restApiMetadata.UriTemplates.TryGetValueWithKey(uriTemplateKey));
+            this.TestContext.WriteLine($"URI template: {template}");
+
+            var uriTemplate = new UriTemplate(template);
+            var scope = restApiMetadata.ClaimsSet.TryGetValueWithKey("scopes").Replace(',', ' ');
+            var uri = uriTemplate.BindByPosition(restApiMetadata.ApiKey, redirectLocation, scope);
+            this.TestContext.WriteLine($"URI: {uri.OriginalString}");
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+            var response = await httpClient.SendAsync(requestMessage);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            this.TestContext.WriteLine(content);
+            Assert.IsTrue(response.IsSuccessStatusCode, "The expected success status code is not here.");
+        }
+
         static readonly HttpClient httpClient;
 
-        static PublicClientApplication app;
         static RestApiMetadata restApiMetadata;
-
     }
 }
