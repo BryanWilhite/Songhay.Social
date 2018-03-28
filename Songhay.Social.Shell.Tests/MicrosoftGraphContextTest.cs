@@ -36,7 +36,11 @@ namespace Songhay.Social.Shell.Tests
 
             var restApiMetadata = meta.RestApiMetadataSet.TryGetValueWithKey("MicrosoftGraphCommon", throwException: true);
             var appId = restApiMetadata.ClaimsSet.TryGetValueWithKey("applicationId", throwException: true);
-            app = new PublicClientApplication(appId, restApiMetadata.ApiBase.OriginalString, TokenCacheHelper.GetUserCache());
+            var appSecret = restApiMetadata.ClaimsSet.TryGetValueWithKey("password", throwException: true);
+            var credential = new ClientCredential(appSecret);
+            var userTokenCache = new TokenCache();
+            var appTokenCache = new TokenCache();
+            app = new ConfidentialClientApplication(appId, "http://songhaysystem.com", credential, userTokenCache, appTokenCache);
 
             officeRestApiMetadata = meta.RestApiMetadataSet.TryGetValueWithKey("MicrosoftGraphSonghayOffice", throwException: true);
         }
@@ -51,25 +55,7 @@ namespace Songhay.Social.Shell.Tests
 
             #endregion
 
-            AuthenticationResult authenticationResult = null;
-            try
-            {
-                authenticationResult = await app.AcquireTokenSilentAsync(scopes, app.Users.FirstOrDefault());
-            }
-            catch (MsalUiRequiredException ex)
-            {
-                this.TestContext.WriteLine(ex.Message);
-                this.TestContext.WriteLine($"Cannot authenticate silently...");
-
-                try
-                {
-                    authenticationResult = await app.AcquireTokenAsync(scopes);
-                }
-                catch (MsalException ex2)
-                {
-                    this.TestContext.WriteLine(ex2.Message);
-                }
-            }
+            var authenticationResult = await app.AcquireTokenForClientAsync(scopes);
 
             Assert.IsTrue(app.Users.Any(), "The expected user(s) is not here.");
             app.Users.ForEachInEnumerable(i => this.TestContext.WriteLine($"user: {i.Name}"));
@@ -106,7 +92,7 @@ namespace Songhay.Social.Shell.Tests
 
         static readonly HttpClient httpClient;
 
-        static PublicClientApplication app;
+        static ConfidentialClientApplication app;
         static RestApiMetadata officeRestApiMetadata;
 
     }
