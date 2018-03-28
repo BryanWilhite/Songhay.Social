@@ -36,8 +36,7 @@ namespace Songhay.Social.Shell.Tests
             configuration.Bind(nameof(ProgramMetadata), meta);
 
             restApiMetadata = meta.RestApiMetadataSet.TryGetValueWithKey("MicrosoftGraph", throwException: true);
-            var appId = restApiMetadata.ClaimsSet.TryGetValueWithKey("applicationId", throwException: true);
-            app = new PublicClientApplication(appId);
+            app = new PublicClientApplication(restApiMetadata.ApiKey);
         }
 
         [Ignore("This is an experimental test that should be run manually.")]
