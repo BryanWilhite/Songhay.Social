@@ -11,11 +11,9 @@ namespace Songhay.Social
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup" /> class.
         /// </summary>
-        /// <param name="env">The env.</param>
         /// <param name="configuration">The configuration.</param>
-        public Startup(IHostingEnvironment env, IConfiguration configuration)
+        public Startup(IConfiguration configuration)
         {
-            this.hostingEnvironment = env;
             this.Configuration = configuration;
         }
 

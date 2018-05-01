@@ -15,11 +15,10 @@ namespace Songhay.Social.Tests.Controllers
         [TestInitialize]
         public void InitializeTest()
         {
-
             var targetDirectoryInfo = this.TestContext.ShouldGetConventionalProjectDirectoryInfo(this.GetType());
             var basePath = targetDirectoryInfo.FullName;
 
-            var builder = Program.GetWebHostBuilder(args: null, builderAction: (builderContext, configBuilder) =>
+            var builder = Program.CreateWebHostBuilder(args: null, builderAction: (builderContext, configBuilder) =>
             {
                 Assert.IsNotNull(builderContext, "The expected Web Host builder context is not here.");
 
@@ -44,7 +43,7 @@ namespace Songhay.Social.Tests.Controllers
             this._meta = new ProgramMetadata();
             var configuration = this.TestContext.ShouldLoadConfigurationFromConventionalProject(this.GetType(), b =>
             {
-                b.AddJsonFile("./app-settings.songhay-system.json", optional: false, reloadOnChange: false);
+                b.AddJsonFile(Program.conventionalSettingsFile, optional: false, reloadOnChange: false);
                 b.SetBasePath(basePath);
                 return b;
             });

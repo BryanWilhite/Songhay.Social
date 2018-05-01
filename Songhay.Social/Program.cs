@@ -19,22 +19,20 @@ namespace Songhay.Social
         /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
         {
-            GetWebHostBuilder(args, builderAction: null).Build().Run();
+            CreateWebHostBuilder(args, builderAction: null).Build().Run();
         }
 
-        internal static IWebHostBuilder GetWebHostBuilder() =>
-            GetWebHostBuilder(args: null, builderAction: null)
-            ;
-
-        internal static IWebHostBuilder GetWebHostBuilder(string[] args, Action<WebHostBuilderContext, IConfigurationBuilder> builderAction)
-            => WebHost
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args, Action<WebHostBuilderContext, IConfigurationBuilder> builderAction) =>
+            WebHost
                 .CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((builderContext, configBuilder) =>
                 {
                     builderAction?.Invoke(builderContext, configBuilder);
-                    configBuilder.AddJsonFile("app-settings.songhay-system.json", optional: false);
+                    configBuilder.AddJsonFile(conventionalSettingsFile, optional: false);
                 })
                 .UseStartup<Startup>()
                 ;
+
+        internal const string conventionalSettingsFile = "app-settings.songhay-system.json";
     }
 }
