@@ -39,7 +39,6 @@ namespace Songhay.Social.Shell.Tests
             restApiMetadata = meta.RestApiMetadataSet.TryGetValueWithKey("MicrosoftGraph", throwException: true);
         }
 
-        [Ignore("This is an experimental test that should be run manually.")]
         [TestMethod]
         public async Task ShouldAcquireTokenAndListAppUser()
         {
@@ -100,7 +99,6 @@ namespace Songhay.Social.Shell.Tests
             Assert.IsFalse(app.Users.Any(), "User(s) are not expected.");
         }
 
-        [Ignore("This is an experimental test that should be run manually.")]
         [TestMethod]
         [TestProperty("redirectLocation", "https://localhost:44334/signin-oidc")]
         [TestProperty("uriTemplateKey", "oauth2-authorization")]

@@ -54,7 +54,6 @@ namespace Songhay.Social.Shell.Tests
             };
         }
 
-        [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
         [TestCategory("Integration")]
         [TestProperty("friendshipType", "FollowersList")]
         [TestProperty("pageSize", "10")] //increasing this value might exceed quota
@@ -95,7 +94,6 @@ namespace Songhay.Social.Shell.Tests
             }
         }
 
-        [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
         [TestCategory("Integration")]
         [TestMethod]
         [TestProperty("statusId", "964573153082064896")]
@@ -127,7 +125,6 @@ namespace Songhay.Social.Shell.Tests
             }
         }
 
-        [Ignore("This test runs against a rate-limited API so it should not be run automatically/regularly.")]
         [TestMethod]
         [TestProperty("screenNameList", "pluralsight,jongalloway")]
         public void ShouldQueryUsersByScreenNameList()
@@ -152,7 +149,6 @@ namespace Songhay.Social.Shell.Tests
             }
         }
 
-        [Ignore("This test is intended to run manually.")]
         [TestCategory("Integration")]
         [TestMethod]
         [TestProperty("profileImageFolder", @"azure-storage-accounts\songhay\shared-social-twitter\")]
