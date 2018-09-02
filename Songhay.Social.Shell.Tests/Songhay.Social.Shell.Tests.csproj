@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="ExcelDataReader" Version="3.4.1" />
-    <PackageReference Include="linqtotwitter" Version="4.2.1" />
+    <PackageReference Include="linqtotwitter" Version="5.0.0-beta3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.2" />
     <PackageReference Include="Microsoft.Identity.Client" Version="1.1.2-preview0008" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
