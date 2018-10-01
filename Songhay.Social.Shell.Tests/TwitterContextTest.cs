@@ -160,7 +160,7 @@ namespace Songhay.Social.Shell.Tests
 
             #region test properties:
 
-            var profileImageFolder = Path.Combine(root, this.TestContext.Properties["profileImageFolder"].ToString());
+            var profileImageFolder = root.ToCombinedPath(this.TestContext.Properties["profileImageFolder"].ToString());
             this.TestContext.ShouldFindDirectory(profileImageFolder);
 
             var screenNameList = this.TestContext.Properties["screenNameList"].ToString().Split(',');

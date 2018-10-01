@@ -5,11 +5,38 @@
             "label": "build",
             "command": "dotnet",
             "type": "process",
+            "args": ["build", "${workspaceFolder}/Songhay.Social.sln"],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "test [Songhay.Social.Shell.Tests, filtered by selected text]",
+            "command": "dotnet",
+            "type": "shell",
             "args": [
-                "build",
-                "${workspaceFolder}/Songhay.Social.sln"
+                "test",
+                "${workspaceFolder}/Songhay.Social.Shell.Tests/Songhay.Social.Shell.Tests.csproj",
+                "--filter:${selectedText}",
+                "--logger:trx",
+                "--results-directory:${workspaceFolder}/TestResults",
+                "--verbosity:normal"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "test [clean test output folder]",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/TestResults"
+            },
+            "linux": {
+                "command": "rm",
+                "args": ["--verbose", "*.trx"]
+            },
+            "windows": {
+                "command": "Remove-Item",
+                "args": ["-Path", "*.trx", "-Verbose"]
+            },
+            "problemMatcher": []
         }
     ]
 }
