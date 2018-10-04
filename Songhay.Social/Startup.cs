@@ -6,6 +6,9 @@ using Songhay.Models;
 
 namespace Songhay.Social
 {
+    /// <summary>
+    /// Conventional ASP.NET Core Startup definition
+    /// </summary>
     public class Startup
     {
         /// <summary>
@@ -26,6 +29,14 @@ namespace Songhay.Social
             this.Configuration.Bind(nameof(ProgramMetadata), meta);
 
             services
+                .AddCors(options =>
+                {
+                    options.AddPolicy(defaultCorsPolicyName,
+                        builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+                })
                 .AddSingleton(typeof(ProgramMetadata), meta)
                 .AddMvc()
                 ;
@@ -40,11 +51,14 @@ namespace Songhay.Social
             }
 
             app
+                .UseCors(defaultCorsPolicyName)
                 .UseDefaultFiles()
                 .UseStaticFiles()
                 .UseMvc()
                 ;
         }
+
+        const string defaultCorsPolicyName = "CorsPolicy";
 
         readonly IHostingEnvironment hostingEnvironment;
     }

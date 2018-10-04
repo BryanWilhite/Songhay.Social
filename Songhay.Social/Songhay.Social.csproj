@@ -9,9 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="linqtotwitter" Version="5.0.0-beta3" />
+    <PackageReference Include="linqtotwitter" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
-    <PackageReference Include="SonghayCore" Version="2.8.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
+    <PackageReference Include="SonghayCore" Version="2.8.7" />
   </ItemGroup>
 
   <ItemGroup>
