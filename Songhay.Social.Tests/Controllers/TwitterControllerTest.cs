@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Songhay.Extensions;
 using Songhay.Models;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Tavis.UriTemplates;
@@ -55,10 +58,20 @@ namespace Songhay.Social.Tests.Controllers
 
         [TestCategory("Integration")]
         [TestMethod]
+        [TestProperty("headers", @"{}")]
+        [TestProperty("outputFile", @"json\ShouldGetTwitterFavorites.json")]
         [TestProperty("pathTemplate", "statuses")]
         public async Task ShouldGetTwitterFavorites()
         {
+            var projectInfo = this.TestContext.ShouldGetProjectDirectoryInfo(this.GetType());
+
             #region test properties:
+
+            var headers = JsonConvert.DeserializeObject<Dictionary<string, string>>(this.TestContext.Properties["headers"].ToString());
+
+            var outputFile = this.TestContext.Properties["outputFile"].ToString();
+            outputFile = projectInfo.FullName.ToCombinedPath(outputFile);
+            this.TestContext.ShouldFindFile(outputFile);
 
             var pathTemplate = new UriTemplate(string.Concat(baseRoute, this.TestContext.Properties["pathTemplate"].ToString()));
 
@@ -69,6 +82,11 @@ namespace Songhay.Social.Tests.Controllers
             var response = await client.GetAsync(path);
 
             response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.IsFalse(string.IsNullOrEmpty(content), "The expected content is not here.");
+            var jA = JArray.Parse(content);
+            File.WriteAllText(outputFile, jA.ToString());
         }
 
         const string baseRoute = "twitter/v1/";
