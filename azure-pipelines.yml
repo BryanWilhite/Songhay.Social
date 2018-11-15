@@ -1,17 +1,28 @@
 name: $(System.TeamProject)_$(Build.DefinitionName)_$(Build.SourceBranchName)_$(Build.BuildId)
+
+variables:
+  BuildConfiguration: 'Release'
+  RepoName: 'Songhay.Social'
+
 trigger:
-- master
-- releases/*
+  batch: false
+  branches:
+    include:
+    - master
+    - releases/*
+  paths:
+    exclude:
+    - /azure*.yml
+    - $(RepoName).Activities.Tests/*
+    - $(RepoName).Repository.Tests/*
+    - $(RepoName).Shell.Tests/*
+    - $(RepoName).Tests/*
 
 resources:
 - repo: self
 
 queue:
   name: Hosted VS2017
-
-variables:
-  BuildConfiguration: 'Release'
-  RepoName: 'Songhay.Social'
 
 steps:
 - task: DotNetCoreCLI@2
