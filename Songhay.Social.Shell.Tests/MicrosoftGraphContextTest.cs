@@ -1,12 +1,8 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Identity.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Songhay.Extensions;
 using Songhay.Models;
-using System;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Tavis.UriTemplates;
 
@@ -37,66 +33,6 @@ namespace Songhay.Social.Shell.Tests
             configuration.Bind(nameof(ProgramMetadata), meta);
 
             restApiMetadata = meta.RestApiMetadataSet.TryGetValueWithKey("MicrosoftGraph", throwException: true);
-        }
-
-        [TestMethod]
-        public async Task ShouldAcquireTokenAndListAppUser()
-        {
-            var scopes = restApiMetadata.ClaimsSet.TryGetValueWithKey("scopes", throwException: true).Split(',');
-            AuthenticationResult authenticationResult = null;
-
-            var app = new PublicClientApplication(restApiMetadata.ApiKey);
-            try
-            {
-                await app.AcquireTokenSilentAsync(scopes, app.Users.FirstOrDefault());
-            }
-            catch (MsalUiRequiredException ex)
-            {
-                this.TestContext.WriteLine(ex.Message);
-                this.TestContext.WriteLine($"Cannot authenticate silently...");
-
-                try
-                {
-                    authenticationResult = await app.AcquireTokenAsync(scopes);
-                }
-                catch (NotImplementedException ex2)
-                {
-                    this.TestContext.WriteLine(ex2.StackTrace);
-                    Assert.Inconclusive("The Login Screen we see on full .NET Framework is not supported on .NET Core");
-                }
-                catch (MsalException ex2)
-                {
-                    this.TestContext.WriteLine(ex2.Message);
-                }
-            }
-
-            Assert.IsTrue(app.Users.Any(), "The expected user(s) is not here.");
-            app.Users.ForEachInEnumerable(i => this.TestContext.WriteLine($"user: {i.Name}"));
-
-            Assert.IsNotNull(authenticationResult, "The expected authentication result is not here.");
-            this.TestContext.WriteLine($"{nameof(authenticationResult.AccessToken)}: {authenticationResult.AccessToken}");
-            this.TestContext.WriteLine($"{nameof(authenticationResult.User.Name)}: {authenticationResult.User.Name}");
-            this.TestContext.WriteLine($"{nameof(authenticationResult.User.DisplayableId)}: {authenticationResult.User.DisplayableId}");
-            this.TestContext.WriteLine($"{nameof(authenticationResult.ExpiresOn)}: {authenticationResult.ExpiresOn.ToLocalTime()}");
-
-            var request = new HttpRequestMessage(HttpMethod.Get, restApiMetadata.ApiBase);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken);
-            var response = await httpClient.SendAsync(request);
-            Assert.IsTrue(response.IsSuccessStatusCode, "The expected success status code is not here.");
-
-            var content = await response.Content.ReadAsStringAsync();
-            this.TestContext.WriteLine($"token: {content}");
-
-            try
-            {
-                app.Remove(app.Users.FirstOrDefault());
-            }
-            catch (MsalException ex)
-            {
-                this.TestContext.WriteLine(ex.Message);
-            }
-
-            Assert.IsFalse(app.Users.Any(), "User(s) are not expected.");
         }
 
         [TestMethod]

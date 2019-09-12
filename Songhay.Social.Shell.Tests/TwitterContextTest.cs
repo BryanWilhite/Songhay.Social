@@ -157,10 +157,11 @@ namespace Songhay.Social.Shell.Tests
         public async Task ShouldWriteProfileImages()
         {
             var root = this.TestContext.ShouldGetAssemblyDirectoryParent(this.GetType(), expectedLevels: 5);
+            var rootInfo = new DirectoryInfo(root);
 
             #region test properties:
 
-            var profileImageFolder = root.ToCombinedPath(this.TestContext.Properties["profileImageFolder"].ToString());
+            var profileImageFolder = rootInfo.ToCombinedPath(this.TestContext.Properties["profileImageFolder"].ToString());
             this.TestContext.ShouldFindDirectory(profileImageFolder);
 
             var screenNameList = this.TestContext.Properties["screenNameList"].ToString().Split(',');
