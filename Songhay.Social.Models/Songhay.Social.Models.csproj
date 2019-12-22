@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="linqtotwitter" Version="5.0.0" />
-    <PackageReference Include="SonghayCore" Version="3.2.9" />
+    <PackageReference Include="SonghayCore" Version="3.2.16" />
   </ItemGroup>
 
 </Project>
