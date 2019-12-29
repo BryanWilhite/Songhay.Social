@@ -20,8 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Songhay.Social.ModelContext\Songhay.Social.ModelContext.csproj" />
-    <ProjectReference Include="..\Songhay.Social.Models\Songhay.Social.Models.csproj" />
+    <ProjectReference Include="..\Songhay.Social\Songhay.Social.csproj" />
   </ItemGroup>
 
 </Project>

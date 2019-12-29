@@ -5,12 +5,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Songhay.Extensions;
 using Songhay.Models;
+using Songhay.Social.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Tavis.UriTemplates;
 
-namespace Songhay.Social.Tests.Controllers
+namespace Songhay.Social.Web.Tests.Controllers
 {
     [TestClass]
     public class TwitterControllerTest
@@ -46,7 +47,7 @@ namespace Songhay.Social.Tests.Controllers
             this._meta = new ProgramMetadata();
             var configuration = this.TestContext.ShouldLoadConfigurationFromConventionalProject(this.GetType(), b =>
             {
-                b.AddJsonFile(Program.conventionalSettingsFile, optional: false, reloadOnChange: false);
+                b.AddJsonFile(AppScalars.ConventionalSettingsFile, optional: false, reloadOnChange: false);
                 b.SetBasePath(basePath);
                 return b;
             });

@@ -4,11 +4,11 @@ using Songhay.Models;
 using Songhay.Social.ModelContext;
 using System;
 using System.Collections.Generic;
-using Songhay.Social.ModelContext.Extensions;
+using Songhay.Social.Extensions;
 using System.Net;
 using LinqToTwitter;
 
-namespace Songhay.Social.Controllers
+namespace Songhay.Social.Web.Controllers
 {
     /// <summary>
     /// Controls social media API(s)

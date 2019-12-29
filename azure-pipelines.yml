@@ -46,13 +46,13 @@ steps:
   displayName: 'Download Secure File 7b7b494f-fe60-4ad6-90dc-f2abc430f4d6'
   inputs:
     fileInput: '7b7b494f-fe60-4ad6-90dc-f2abc430f4d6'
-    targetPath: $(RepoName)
+    targetPath: $(RepoName).Web
 
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet test'
+  displayName: 'dotnet test [Web]'
   inputs:
     command: test
-    projects: '**/$(RepoName).Tests/*.csproj'
+    projects: '**/$(RepoName).Web.Tests/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2

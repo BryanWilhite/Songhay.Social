@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Songhay.Extensions;
 using Songhay.Models;
 using Songhay.Social.ModelContext;
-using Songhay.Social.ModelContext.Extensions;
+using Songhay.Social.Extensions;
 using System;
 using System.Linq;
 using System.Net.Http;

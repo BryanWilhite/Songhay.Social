@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Songhay.Social.ModelContext.Extensions
+namespace Songhay.Social.Extensions
 {
     /// <summary>
     /// Extensions of <see cref="TwitterContext"/>
