@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Songhay.Extensions;
 using Songhay.Models;
-using Songhay.Social.ModelContext;
 using System;
 using System.Collections.Generic;
 using Songhay.Social.Extensions;
 using System.Net;
 using LinqToTwitter;
+using Songhay.Social.Activities;
 
 namespace Songhay.Social.Web.Controllers
 {
     /// <summary>
     /// Controls social media API(s)
     /// </summary>
-    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
+    /// <seealso cref="Controller" />
     [Route("[controller]/v1")]
     public class TwitterController : Controller
     {
@@ -25,7 +25,7 @@ namespace Songhay.Social.Web.Controllers
         {
             var restApiMetadata = metadata.ToSocialTwitterRestApiMetadata();
             this.profileImageBaseUri = restApiMetadata.ToTwitterProfileImageRootUri();
-            this.twitterAuthorizer = SocialContext.GetTwitterCredentialsAndAuthorizer(restApiMetadata.ClaimsSet.ToNameValueCollection());
+            this.twitterAuthorizer = TwitterActivity.GetTwitterCredentialsAndAuthorizer(restApiMetadata.ClaimsSet.ToNameValueCollection());
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Songhay.Social.Web.Controllers
         [Route("statuses")]
         public IActionResult GetTwitterStatuses()
         {
-            var statuses = SocialContext.GetTwitterStatuses(this.twitterAuthorizer, this.profileImageBaseUri);
+            var statuses = TwitterActivity.GetTwitterStatuses(this.twitterAuthorizer, this.profileImageBaseUri);
             return this.Ok(statuses);
         }
 

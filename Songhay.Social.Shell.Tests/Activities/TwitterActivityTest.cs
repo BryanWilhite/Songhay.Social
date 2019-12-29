@@ -3,18 +3,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Songhay.Extensions;
 using Songhay.Models;
-using Songhay.Social.ModelContext;
+using Songhay.Social.Activities;
 using Songhay.Social.Extensions;
-using System;
 using System.Linq;
 using System.Net.Http;
 
-namespace Songhay.Social.Shell.Tests.ModelContext
+namespace Songhay.Social.Shell.Tests.Activities
 {
     [TestClass]
-    public class SocialContextTest
+    public class TwitterActivityTest
     {
-        static SocialContextTest()
+        static TwitterActivityTest()
         {
             httpClient = new HttpClient();
         }
@@ -58,7 +57,7 @@ namespace Songhay.Social.Shell.Tests.ModelContext
             var restApiMetadata = meta.ToSocialTwitterRestApiMetadata();
             var profileImageBaseUri = restApiMetadata.ToTwitterProfileImageRootUri();
 
-            var statuses = SocialContext.GetTwitterStatuses(this._authorizer, profileImageBaseUri);
+            var statuses = TwitterActivity.GetTwitterStatuses(this._authorizer, profileImageBaseUri);
             Assert.IsTrue(statuses.Any(), "The expected statuses are not here.");
 
             statuses.ForEachInEnumerable(i =>

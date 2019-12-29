@@ -8,8 +8,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 
-
-namespace Songhay.Social.Shell.Tests.ModelContext.Extensions
+namespace Songhay.Social.Shell.Tests.Extensions
 {
     /// <summary>
     /// Extensions of <see cref="TwitterContextExtensions"/>
