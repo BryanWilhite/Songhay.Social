@@ -1,35 +1,36 @@
 ﻿using ExcelDataReader;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Songhay.Extensions;
 using System.IO;
 using System.Text;
 using Tavis.UriTemplates;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace Songhay.Social.Shell.Tests
 {
-    [TestClass]
     public class TweetBookContextTest
     {
-        public TestContext TestContext { get; set; }
+        public TweetBookContextTest(ITestOutputHelper helper)
+        {
+            this._testOutputHelper = helper;
+        }
 
-        [TestMethod]
-        [TestProperty("pathTemplate", @"./TweetBooks/TweetBook-{year}-{month}.xlsx")]
-        public void ShouldReadTweetBook()
+        [Theory]
+        [InlineData(@"./TweetBooks/TweetBook-{year}-{month}.xlsx")]
+        public void ShouldReadTweetBook(string pathExpression)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var projectDirectoryInfo = this.TestContext.ShouldGetProjectDirectoryInfo(this.GetType());
+            var projectRoot = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
+            var projectInfo = new DirectoryInfo(projectRoot);
+            Assert.True(projectInfo.Exists);
 
-            #region test properties:
-
-            var pathTemplate = new UriTemplate(this.TestContext.Properties["pathTemplate"].ToString());
-
-            #endregion
+            var pathTemplate = new UriTemplate(pathExpression);
 
             var path = pathTemplate.BindByPosition(year, month)?.OriginalString;
-            path = Path.Combine(projectDirectoryInfo.FullName, path);
+            path = Path.Combine(projectInfo.FullName, path);
             path = Path.GetFullPath(path);
-            this.TestContext.ShouldFindFile(path);
+            Assert.True(File.Exists(path));
 
             using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
             {
@@ -39,7 +40,7 @@ namespace Songhay.Social.Shell.Tests
                     {
                         while (reader.Read())
                         {
-                            this.TestContext.WriteLine(reader.GetString(1));
+                            this._testOutputHelper.WriteLine(reader.GetString(1));
                         }
                     } while (reader.NextResult());
                 }
@@ -48,5 +49,7 @@ namespace Songhay.Social.Shell.Tests
 
         const string year = "2018";
         const string month = "05";
+
+        readonly ITestOutputHelper _testOutputHelper;
     }
 }

@@ -1,73 +1,62 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Songhay.Extensions;
-using Songhay.Models;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Songhay.Extensions;
+using Songhay.Models;
 using Tavis.UriTemplates;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace Songhay.Social.Shell.Tests
 {
-    [TestClass]
     public class MicrosoftGraphContextTest
     {
-        static MicrosoftGraphContextTest()
+        public MicrosoftGraphContextTest(ITestOutputHelper helper)
         {
-            httpClient = new HttpClient();
-        }
+            this._testOutputHelper = helper;
 
-        public TestContext TestContext { get; set; }
+            var projectRoot = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
+            var projectInfo = new DirectoryInfo(projectRoot);
+            Assert.True(projectInfo.Exists);
 
-        [TestInitialize]
-        public void InitializeTest()
-        {
-            var targetDirectoryInfo = this.TestContext.ShouldGetConventionalProjectDirectoryInfo(this.GetType());
-            var basePath = targetDirectoryInfo.FullName;
+            var basePath = projectInfo.Parent.FindDirectory("Songhay.Social.Web").FullName;
             var meta = new ProgramMetadata();
-            var configuration = this.TestContext.ShouldLoadConfigurationFromConventionalProject(this.GetType(), b =>
+            var configuration = ProgramUtility.LoadConfiguration(basePath, b =>
             {
-                b.AddJsonFile("./app-settings.songhay-system.json", optional: false, reloadOnChange: false);
+                b.AddJsonFile("./app-settings.songhay-system.json", optional : false, reloadOnChange : false);
                 b.SetBasePath(basePath);
                 return b;
             });
             configuration.Bind(nameof(ProgramMetadata), meta);
 
-            restApiMetadata = meta.RestApiMetadataSet.TryGetValueWithKey("MicrosoftGraph", throwException: true);
+            _restApiMetadata = meta.RestApiMetadataSet.TryGetValueWithKey("MicrosoftGraph", throwException : true);
         }
 
-        [TestMethod]
-        [TestProperty("redirectLocation", "https://localhost:44334/signin-oidc")]
-        [TestProperty("uriTemplateKey", "oauth2-authorization")]
-        public async Task ShouldGetAuthorizationCode()
+        [Theory]
+        [InlineData("https://localhost:44334/signin-oidc", "oauth2-authorization")]
+        public async Task ShouldGetAuthorizationCode(string redirectLocation, string uriTemplateKey)
         {
-            #region test properties:
-
-            var redirectLocation = this.TestContext.Properties["redirectLocation"].ToString();
-            var uriTemplateKey = this.TestContext.Properties["uriTemplateKey"].ToString();
-
-            #endregion
-
             var template = string.Concat(
-                restApiMetadata.ClaimsSet.TryGetValueWithKey("authority"),
-                restApiMetadata.UriTemplates.TryGetValueWithKey(uriTemplateKey));
-            this.TestContext.WriteLine($"URI template: {template}");
+                _restApiMetadata.ClaimsSet.TryGetValueWithKey("authority"),
+                _restApiMetadata.UriTemplates.TryGetValueWithKey(uriTemplateKey));
+            this._testOutputHelper.WriteLine($"URI template: {template}");
 
             var uriTemplate = new UriTemplate(template);
-            var scope = restApiMetadata.ClaimsSet.TryGetValueWithKey("scopes").Replace(',', ' ');
-            var uri = uriTemplate.BindByPosition(restApiMetadata.ApiKey, redirectLocation, scope);
-            this.TestContext.WriteLine($"URI: {uri.OriginalString}");
+            var scope = _restApiMetadata.ClaimsSet.TryGetValueWithKey("scopes").Replace(',', ' ');
+            var uri = uriTemplate.BindByPosition(_restApiMetadata.ApiKey, redirectLocation, scope);
+            this._testOutputHelper.WriteLine($"URI: {uri.OriginalString}");
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-            var response = await httpClient.SendAsync(requestMessage);
+            var response = await requestMessage.SendAsync();
 
             var content = await response.Content.ReadAsStringAsync();
 
-            this.TestContext.WriteLine(content);
-            Assert.IsTrue(response.IsSuccessStatusCode, "The expected success status code is not here.");
+            this._testOutputHelper.WriteLine(content);
+            Assert.True(response.IsSuccessStatusCode, "The expected success status code is not here.");
         }
 
-        static readonly HttpClient httpClient;
-
-        static RestApiMetadata restApiMetadata;
+        readonly ITestOutputHelper _testOutputHelper;
+        readonly RestApiMetadata _restApiMetadata;
     }
 }

@@ -1,41 +1,38 @@
 ﻿using LinqToTwitter;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Songhay.Extensions;
 using Songhay.Models;
 using Songhay.Social.Activities;
 using Songhay.Social.Extensions;
+using System.IO;
 using System.Linq;
-using System.Net.Http;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace Songhay.Social.Shell.Tests.Activities
 {
-    [TestClass]
     public class TwitterActivityTest
     {
-        static TwitterActivityTest()
+        public TwitterActivityTest(ITestOutputHelper helper)
         {
-            httpClient = new HttpClient();
-        }
+            this._testOutputHelper = helper;
 
-        public TestContext TestContext { get; set; }
+            var projectRoot = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
+            var projectInfo = new DirectoryInfo(projectRoot);
+            Assert.True(projectInfo.Exists);
 
-        [TestInitialize]
-        public void InitializeTest()
-        {
-            var targetDirectoryInfo = this.TestContext.ShouldGetConventionalProjectDirectoryInfo(this.GetType());
-            var basePath = targetDirectoryInfo.FullName;
-            meta = new ProgramMetadata();
-            var configuration = this.TestContext.ShouldLoadConfigurationFromConventionalProject(this.GetType(), b =>
+            var basePath = projectInfo.Parent.FindDirectory("Songhay.Social.Web").FullName;
+            _meta = new ProgramMetadata();
+            var configuration = ProgramUtility.LoadConfiguration(basePath, b =>
             {
                 b.AddJsonFile("./app-settings.songhay-system.json", optional: false, reloadOnChange: false);
                 b.SetBasePath(basePath);
                 return b;
             });
-            configuration.Bind(nameof(ProgramMetadata), meta);
-            this.TestContext.WriteLine($"{meta}");
+            configuration.Bind(nameof(ProgramMetadata), _meta);
+            this._testOutputHelper.WriteLine($"{_meta}");
 
-            var restApiMetadata = meta.ToSocialTwitterRestApiMetadata();
+            var restApiMetadata = _meta.ToSocialTwitterRestApiMetadata();
 
             var data = new OpenAuthorizationData(restApiMetadata.ClaimsSet.ToNameValueCollection());
 
@@ -51,19 +48,19 @@ namespace Songhay.Social.Shell.Tests.Activities
             };
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetTwitterStatuses()
         {
-            var restApiMetadata = meta.ToSocialTwitterRestApiMetadata();
+            var restApiMetadata = _meta.ToSocialTwitterRestApiMetadata();
             var profileImageBaseUri = restApiMetadata.ToTwitterProfileImageRootUri();
 
             var statuses = TwitterActivity.GetTwitterStatuses(this._authorizer, profileImageBaseUri);
-            Assert.IsTrue(statuses.Any(), "The expected statuses are not here.");
+            Assert.True(statuses.Any(), "The expected statuses are not here.");
 
             statuses.ForEachInEnumerable(i =>
             {
 
-                this.TestContext.WriteLine($@"
+                this._testOutputHelper.WriteLine($@"
 {nameof(i.ID)}: {i.ID}
 {nameof(i.StatusID)}: {i.StatusID}
 {nameof(i.User.ScreenNameResponse)}: {i.User.ScreenNameResponse}
@@ -73,9 +70,8 @@ namespace Songhay.Social.Shell.Tests.Activities
             });
         }
 
-        static readonly HttpClient httpClient;
-        static ProgramMetadata meta;
-
-        IAuthorizer _authorizer;
+        readonly IAuthorizer _authorizer;
+        readonly ITestOutputHelper _testOutputHelper;
+        readonly ProgramMetadata _meta;
     }
 }

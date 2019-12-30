@@ -1,6 +1,5 @@
 using LinqToTwitter;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Songhay.Extensions;
 using Songhay.Models;
 using Songhay.Social.Extensions;
@@ -10,33 +9,31 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace Songhay.Social.Shell.Tests
 {
-    [TestClass]
     public class TwitterContextTest
     {
-        static TwitterContextTest()
+        public TwitterContextTest(ITestOutputHelper helper)
         {
-            httpClient = new HttpClient();
-        }
+            this._testOutputHelper = helper;
 
-        public TestContext TestContext { get; set; }
+            var projectRoot = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
+            var projectInfo = new DirectoryInfo(projectRoot);
+            Assert.True(projectInfo.Exists);
 
-        [TestInitialize]
-        public void InitializeTest()
-        {
-            var targetDirectoryInfo = this.TestContext.ShouldGetConventionalProjectDirectoryInfo(this.GetType());
-            var basePath = targetDirectoryInfo.FullName;
+            var basePath = projectInfo.Parent.FindDirectory("Songhay.Social.Web").FullName;
             var meta = new ProgramMetadata();
-            var configuration = this.TestContext.ShouldLoadConfigurationFromConventionalProject(this.GetType(), b =>
+            var configuration = ProgramUtility.LoadConfiguration(basePath, b =>
             {
                 b.AddJsonFile("./app-settings.songhay-system.json", optional: false, reloadOnChange: false);
                 b.SetBasePath(basePath);
                 return b;
             });
             configuration.Bind(nameof(ProgramMetadata), meta);
-            this.TestContext.WriteLine($"{meta}");
+            this._testOutputHelper.WriteLine($"{meta}");
 
             var restApiMetadata = meta.ToSocialTwitterRestApiMetadata();
 
@@ -54,20 +51,14 @@ namespace Songhay.Social.Shell.Tests
             };
         }
 
-        [TestCategory("Integration")]
-        [TestProperty("friendshipType", "FollowersList")]
-        [TestProperty("pageSize", "10")] //increasing this value might exceed quota
-        [TestProperty("screenName", "KinteSpace")]
-        [TestMethod]
-        public void ShouldQueryFriendshipByScreenName()
+        [Theory]
+        [InlineData(
+            "FollowersList",
+            10, //increasing this value might exceed quota
+            "KinteSpace")]
+        public void ShouldQueryFriendshipByScreenName(string friendshipTypeString, int pageSize, string screenName)
         {
-            #region test properties:
-
-            var friendshipType = Enum.Parse<FriendshipType>(this.TestContext.Properties["friendshipType"].ToString());
-            var pageSize = Convert.ToInt32(this.TestContext.Properties["pageSize"]);
-            var screenName = this.TestContext.Properties["screenName"].ToString();
-
-            #endregion
+            var friendshipType = Enum.Parse<FriendshipType>(friendshipTypeString);
 
             using (var ctx = new TwitterContext(this._authorizer))
             {
@@ -88,23 +79,16 @@ namespace Songhay.Social.Shell.Tests
 
                     cursor = friendship.CursorMovement.Next;
 
-                    friendship.Users.ForEachInEnumerable(i => this.TestContext.WriteLine($"{i.ScreenNameResponse}"));
+                    friendship.Users.ForEachInEnumerable(i => this._testOutputHelper.WriteLine($"{i.ScreenNameResponse}"));
 
                 } while (cursor != 0);
             }
         }
 
-        [TestCategory("Integration")]
-        [TestMethod]
-        [TestProperty("statusId", "964573153082064896")]
-        public void ShouldQueryStatusByStatusId()
+        [Theory]
+        [InlineData(964573153082064896)]
+        public void ShouldQueryStatusByStatusId(ulong statusId)
         {
-            #region test properties:
-
-            var statusId = Convert.ToUInt64(this.TestContext.Properties["statusId"]);
-
-            #endregion
-
             using (var context = new TwitterContext(this._authorizer))
             {
                 var query = context.Status.Where(i =>
@@ -114,8 +98,8 @@ namespace Songhay.Social.Shell.Tests
                     (i.ID == statusId));
 
                 var status = query.Single();
-                Assert.IsNotNull(status, "The expected status is not here.");
-                this.TestContext.WriteLine($@"
+                Assert.NotNull(status);
+                this._testOutputHelper.WriteLine($@"
 {nameof(status.ID)}: {status.ID}
 {nameof(status.StatusID)}: {status.StatusID}
 {nameof(status.User.ScreenNameResponse)}: {status.User.ScreenNameResponse}
@@ -125,57 +109,43 @@ namespace Songhay.Social.Shell.Tests
             }
         }
 
-        [TestMethod]
-        [TestProperty("screenNameList", "pluralsight,jongalloway")]
-        public void ShouldQueryUsersByScreenNameList()
+        [Theory]
+        [InlineData("pluralsight,jongalloway")]
+        public void ShouldQueryUsersByScreenNameList(string screenNames)
         {
-            #region test properties:
-
-            var screenNameList = this.TestContext.Properties["screenNameList"].ToString();
-
-            #endregion
-
             using (var context = new TwitterContext(this._authorizer))
             {
                 var query = context.User.Where(i =>
                     (i.Type == UserType.Lookup) &&
-                    (i.ScreenNameList == screenNameList));
+                    (i.ScreenNameList == screenNames));
 
                 var users = query.ToArray();
-                Assert.IsNotNull(users, "The expected user set is not here.");
-                Assert.IsTrue(users.Any(), "The expected users are not here.");
+                Assert.NotNull(users);
+                Assert.True(users.Any(), "The expected users are not here.");
 
-                users.ForEachInEnumerable(i => this.TestContext.WriteLine($"{i.ScreenNameResponse}"));
+                users.ForEachInEnumerable(i => this._testOutputHelper.WriteLine($"{i.ScreenNameResponse}"));
             }
         }
 
-        [TestCategory("Integration")]
-        [TestMethod]
-        [TestProperty("profileImageFolder", @"azure-storage-accounts\songhay\shared-social-twitter\")]
-        [TestProperty("screenNameList", "BryanWilhite,Kintespace")]
-        [TestProperty("count", "50")]
-        public async Task ShouldWriteProfileImages()
+        [Theory]
+        [InlineData(@"azure-storage-accounts\songhay\shared-social-twitter\", "BryanWilhite,Kintespace", 50)]
+        public async Task ShouldWriteProfileImages(string profileImageFolder, string screenNames, int count)
         {
-            var root = this.TestContext.ShouldGetAssemblyDirectoryParent(this.GetType(), expectedLevels: 5);
+            var root = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../../../");
             var rootInfo = new DirectoryInfo(root);
 
-            #region test properties:
+            profileImageFolder = rootInfo.ToCombinedPath(profileImageFolder);
+            Assert.True(Directory.Exists(profileImageFolder));
 
-            var profileImageFolder = rootInfo.ToCombinedPath(this.TestContext.Properties["profileImageFolder"].ToString());
-            this.TestContext.ShouldFindDirectory(profileImageFolder);
-
-            var screenNameList = this.TestContext.Properties["screenNameList"].ToString().Split(',');
-            var count = Convert.ToInt32(this.TestContext.Properties["count"]);
-
-            #endregion
+            var screenNameList = screenNames.Split(',');
 
             using (var context = new TwitterContext(this._authorizer))
             {
                 var favorites = context.ToFavorites(count, includeEntities: false);
-                Assert.IsTrue(favorites.Any(), "The expected favorites are not here");
+                Assert.True(favorites.Any());
 
                 var usersFromFavorites = favorites.Select(i => i.User).ToList();
-                Assert.IsTrue(usersFromFavorites.Any(), "The expected favorites users are not here");
+                Assert.True(usersFromFavorites.Any());
 
                 var usersFromFollowing = new List<User>();
                 screenNameList.ForEachInEnumerable(screenName =>
@@ -184,7 +154,7 @@ namespace Songhay.Social.Shell.Tests
                     usersFromFollowing.AddRange(users);
                 });
 
-                Assert.IsTrue(usersFromFollowing.Any(), "The expected followers are not here");
+                Assert.True(usersFromFollowing.Any());
 
                 var profileImages = usersFromFavorites.Union(usersFromFollowing)
                     .Select(i => new
@@ -203,15 +173,18 @@ namespace Songhay.Social.Shell.Tests
                         i.ScreenName, ".",
                         uri.Segments.Last().Split('.').Last().ToLower()
                         );
-                    this.TestContext.WriteLine($"writing {target}...");
-                    await httpClient.DownloadToFileAsync(uri, target);
+                    var message = new HttpRequestMessage(HttpMethod.Get, uri);
+                    this._testOutputHelper.WriteLine($"writing {target}...");
+
+                    var response = await message.SendAsync();
+                    var data = await response.Content.ReadAsByteArrayAsync();
+                    File.WriteAllBytes(target, data);
                 }
             }
         }
 
-        static readonly HttpClient httpClient;
-
-        IAuthorizer _authorizer;
+        readonly IAuthorizer _authorizer;
+        readonly ITestOutputHelper _testOutputHelper;
 
     }
 }
