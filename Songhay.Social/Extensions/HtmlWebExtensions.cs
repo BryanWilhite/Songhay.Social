@@ -53,6 +53,7 @@ namespace Songhay.Social.Extensions
             var anon = new
             {
                 isPublished = false,
+                location,
                 metaTwitterImage,
                 metaTwitterHandle,
                 metaTwitterTitle,
