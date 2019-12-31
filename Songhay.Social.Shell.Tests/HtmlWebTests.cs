@@ -12,7 +12,7 @@ namespace Songhay.Social.Shell.Tests
         }
 
         [Theory]
-        [InlineData(@"https://codeopinion.com/avoiding-nullreferenceexception/")]
+        [InlineData(@"https://codeopinionXXX.com/avoiding-nullreferenceexception/")]
         public void ShouldLoad(string location)
         {
             //https://html-agility-pack.net/documentation
