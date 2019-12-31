@@ -33,6 +33,9 @@ namespace Songhay.Social.Shell.Tests.Extensions
         [InlineData(
             "../../../json/social-twitter/bryan-wilhite/social-data-test.json",
             "https://codeopinion.com/avoiding-nullreferenceexception/")]
+        [InlineData(
+            "../../../json/social-twitter/kinte-space/social-data-test.json",
+            "https://www.wired.com/story/smoke-from-wildfires-is-a-growing-public-health-crisis-for-cities/")]
         public void ToSocialData_Test(string target, string location)
         {
             target = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, target);

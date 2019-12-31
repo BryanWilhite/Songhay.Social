@@ -54,14 +54,14 @@ namespace Songhay.Social.Extensions
             {
                 isPublished = false,
                 location,
-                metaTwitterImage,
-                metaTwitterHandle,
-                metaTwitterTitle,
-                metaTwitterDescription,
-                metaOgImage,
-                metaOgTitle,
-                metaOgDescription,
-                title
+                metaTwitterImage = metaTwitterImage?.Attributes["content"].Value,
+                metaTwitterHandle = metaTwitterHandle?.Attributes["content"].Value,
+                metaTwitterTitle = metaTwitterTitle?.Attributes["content"].Value,
+                metaTwitterDescription = metaTwitterDescription?.Attributes["content"].Value,
+                metaOgImage = metaOgImage?.Attributes["content"].Value,
+                metaOgTitle = metaOgTitle?.Attributes["content"].Value,
+                metaOgDescription = metaOgDescription?.Attributes["content"].Value,
+                title = title?.InnerText
             };
 
             return JObject.FromObject(anon);
