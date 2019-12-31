@@ -11,9 +11,9 @@ using Xunit.Abstractions;
 
 namespace Songhay.Social.Shell.Tests.Activities
 {
-    public class TwitterActivityTest
+    public class TwitterActivityTests
     {
-        public TwitterActivityTest(ITestOutputHelper helper)
+        public TwitterActivityTests(ITestOutputHelper helper)
         {
             this._testOutputHelper = helper;
 

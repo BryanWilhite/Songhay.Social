@@ -10,9 +10,9 @@ using Xunit.Abstractions;
 
 namespace Songhay.Social.Shell.Tests
 {
-    public class MicrosoftGraphContextTest
+    public class MicrosoftGraphContextTests
     {
-        public MicrosoftGraphContextTest(ITestOutputHelper helper)
+        public MicrosoftGraphContextTests(ITestOutputHelper helper)
         {
             this._testOutputHelper = helper;
 
