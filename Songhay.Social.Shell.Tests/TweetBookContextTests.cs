@@ -38,9 +38,11 @@ namespace Songhay.Social.Shell.Tests
                 {
                     do
                     {
+                        this._testOutputHelper.WriteLine($"{nameof(reader.Name)}: {reader.Name}");
+
                         while (reader.Read())
                         {
-                            this._testOutputHelper.WriteLine(reader.GetString(1));
+                            this._testOutputHelper.WriteLine(reader.GetString(0));
                         }
                     } while (reader.NextResult());
                 }
