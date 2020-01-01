@@ -35,51 +35,96 @@ namespace Songhay.Social.Extensions
                 {
                     errorType = ex.GetType().Name,
                     errorMessage = ex.Message,
-                    location
+                    hasLoadError = true,
+                    isPublished = false,
+                    location,
+                    metaTwitterImage = string.Empty,
+                    metaTwitterHandle = string.Empty,
+                    metaTwitterTitle = string.Empty,
+                    metaTwitterDescription = string.Empty,
+                    metaOgImage = string.Empty,
+                    metaOgTitle = string.Empty,
+                    metaOgDescription = string.Empty,
+                    status = string.Empty,
+                    title = string.Empty
                 };
 
                 return JObject.FromObject(anonError);
             }
 
+            #region set anonymous properties:
+
             //FUNKYKB: tracing HTML can fill up text buffer fast when this member is called repeatedly:
             traceSource?.TraceVerbose($"{nameof(HtmlDocument.DocumentNode)}: {((bool)htmlDoc?.DocumentNode?.HasChildNodes ? "[document has child nodes]" : "[no child notes]")}");
 
-            var metaTwitterImage = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:image:src']");
-            traceSource?.TraceVerbose($"{nameof(metaTwitterImage)}: {metaTwitterImage?.OuterHtml ?? "[null]"}");
+            var metaTwitterImageNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:image:src']");
+            traceSource?.TraceVerbose($"{nameof(metaTwitterImageNode)}: {metaTwitterImageNode?.OuterHtml ?? "[null]"}");
+            var metaTwitterImage = metaTwitterImageNode?.Attributes["content"]?.Value;
 
-            var metaTwitterHandle = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:site']");
-            traceSource?.TraceVerbose($"{nameof(metaTwitterHandle)}: {metaTwitterHandle?.OuterHtml ?? "[null]"}");
+            var metaTwitterHandleNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:site']");
+            traceSource?.TraceVerbose($"{nameof(metaTwitterHandleNode)}: {metaTwitterHandleNode?.OuterHtml ?? "[null]"}");
+            var metaTwitterHandle = metaTwitterHandleNode?.Attributes["content"]?.Value;
 
-            var metaTwitterTitle = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:title']");
-            traceSource?.TraceVerbose($"{nameof(metaTwitterTitle)}: {metaTwitterTitle?.OuterHtml ?? "[null]"}");
+            var metaTwitterTitleNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:title']");
+            traceSource?.TraceVerbose($"{nameof(metaTwitterTitleNode)}: {metaTwitterTitleNode?.OuterHtml ?? "[null]"}");
+            var metaTwitterTitle = metaTwitterTitleNode?.Attributes["content"]?.Value;
 
-            var metaTwitterDescription = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:description']");
-            traceSource?.TraceVerbose($"{nameof(metaTwitterDescription)}: {metaTwitterDescription?.OuterHtml ?? "[null]"}");
+            var metaTwitterDescriptionNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:description']");
+            traceSource?.TraceVerbose($"{nameof(metaTwitterDescriptionNode)}: {metaTwitterDescriptionNode?.OuterHtml ?? "[null]"}");
+            var metaTwitterDescription = metaTwitterDescriptionNode?.Attributes["content"]?.Value;
 
-            var metaOgImage = htmlDoc.DocumentNode.SelectSingleNode("//meta[@property='og:image']");
-            traceSource?.TraceVerbose($"{nameof(metaOgImage)}: {metaOgImage?.OuterHtml ?? "[null]"}");
+            var metaOgImageNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@property='og:image']");
+            traceSource?.TraceVerbose($"{nameof(metaOgImageNode)}: {metaOgImageNode?.OuterHtml ?? "[null]"}");
+            var metaOgImage = metaOgImageNode?.Attributes["content"]?.Value;
 
-            var metaOgTitle = htmlDoc.DocumentNode.SelectSingleNode("//meta[@property='og:title']");
-            traceSource?.TraceVerbose($"{nameof(metaOgTitle)}: {metaOgTitle?.OuterHtml ?? "[null]"}");
+            var metaOgTitleNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@property='og:title']");
+            traceSource?.TraceVerbose($"{nameof(metaOgTitleNode)}: {metaOgTitleNode?.OuterHtml ?? "[null]"}");
+            var metaOgTitle = metaOgTitleNode?.Attributes["content"]?.Value;
 
-            var metaOgDescription = htmlDoc.DocumentNode.SelectSingleNode("//meta[@property='og:description']");
-            traceSource?.TraceVerbose($"{nameof(metaOgDescription)}: {metaOgDescription?.OuterHtml ?? "[null]"}");
+            var metaOgDescriptionNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@property='og:description']");
+            traceSource?.TraceVerbose($"{nameof(metaOgDescriptionNode)}: {metaOgDescriptionNode?.OuterHtml ?? "[null]"}");
+            var metaOgDescription = metaOgDescriptionNode?.Attributes["content"]?.Value;
 
-            var title = htmlDoc.DocumentNode.SelectSingleNode("//head/title");
-            traceSource?.TraceVerbose($"{nameof(title)}: {title?.OuterHtml ?? "[null]"}");
+            var titleNode = htmlDoc.DocumentNode.SelectSingleNode("//head/title");
+            traceSource?.TraceVerbose($"{nameof(titleNode)}: {titleNode?.OuterHtml ?? "[null]"}");
+            var title = titleNode?.InnerText;
+
+            var statusTitle = (!string.IsNullOrWhiteSpace(metaTwitterTitle)) ? metaTwitterTitle
+                :
+                (!string.IsNullOrWhiteSpace(metaOgTitle)) ? metaOgTitle : title;
+
+            var statusDescription = (!string.IsNullOrWhiteSpace(metaTwitterDescription)) ? metaTwitterDescription
+                :
+                metaOgDescription;
+
+            var status = $@"
+{HtmlEntity.DeEntitize(statusTitle)}
+
+{HtmlEntity.DeEntitize(statusDescription ?? string.Empty)}
+
+{location}
+
+#rxa 👁⚙🌩
+".Trim();
+
+            #endregion
 
             var anon = new
             {
+                errorType = string.Empty,
+                errorMessage = string.Empty,
+                hasLoadError = false,
                 isPublished = false,
                 location,
-                metaTwitterImage = metaTwitterImage?.Attributes["content"]?.Value,
-                metaTwitterHandle = metaTwitterHandle?.Attributes["content"]?.Value,
-                metaTwitterTitle = metaTwitterTitle?.Attributes["content"]?.Value,
-                metaTwitterDescription = metaTwitterDescription?.Attributes["content"]?.Value,
-                metaOgImage = metaOgImage?.Attributes["content"]?.Value,
-                metaOgTitle = metaOgTitle?.Attributes["content"]?.Value,
-                metaOgDescription = metaOgDescription?.Attributes["content"]?.Value,
-                title = title?.InnerText
+                metaTwitterImage,
+                metaTwitterHandle,
+                metaTwitterTitle,
+                metaTwitterDescription,
+                metaOgImage,
+                metaOgTitle,
+                metaOgDescription,
+                status,
+                title
             };
 
             return JObject.FromObject(anon);

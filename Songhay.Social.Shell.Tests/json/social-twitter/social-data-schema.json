@@ -1,0 +1,44 @@
+  1 {
+  2   "definitions": {},
+  3   "$schema": "http://json-schema.org/draft-07/schema#",
+  4   "$id": "http://example.com/root.json",
+  5   "type": "array",
+  6   "title": "Songhay Social Data Schema",
+  7   "items": {
+  8     "$id": "#/items",
+  9     "type": "object",
+ 10     "title": "The Items Schema",
+ 11     "required": [
+ 12       "errorType",
+ 13       "errorMessage",
+ 14       "hasLoadError",
+ 15       "isPublished",
+ 16       "location",
+ 17       "metaTwitterImage",
+ 18       "metaTwitterHandle",
+ 19       "metaTwitterTitle",
+ 20       "metaTwitterDescription",
+ 21       "metaOgImage",
+ 22       "metaOgTitle",
+ 23       "metaOgDescription",
+ 24       "status",
+ 25       "title"
+ 26     ],
+ 27     "properties": {
+ 28       "errorType": {},
+ 38       "errorMessage": {},
+ 48       "hasLoadError": {},
+ 57       "isPublished": {},
+ 66       "location": {},
+ 76       "metaTwitterImage": {},
+ 85       "metaTwitterHandle": {},
+ 94       "metaTwitterTitle": {},
+103       "metaTwitterDescription": {},
+112       "metaOgImage": {},
+121       "metaOgTitle": {},
+130       "metaOgDescription": {},
+139       "status": {},
+149       "title": {}
+159     }
+160   }
+161 }
