@@ -22,9 +22,27 @@ namespace Songhay.Social.Extensions
             if (string.IsNullOrWhiteSpace(location)) throw new NullReferenceException($"The expected {nameof(location)} is not here.");
 
             traceSource?.WriteLine($"{nameof(ToSocialData)}: loading `{location}`...");
-            var htmlDoc = web.Load(location);
 
-            traceSource?.TraceVerbose($"{nameof(HtmlDocument.DocumentNode)}: {htmlDoc?.DocumentNode.InnerHtml ?? "[null]"}");
+            HtmlDocument htmlDoc = null;
+            try
+            {
+                htmlDoc = web.Load(location);
+            }
+            catch (Exception ex)
+            {
+                traceSource?.TraceError(ex);
+                var anonError = new
+                {
+                    errorType = ex.GetType().Name,
+                    errorMessage = ex.Message,
+                    location
+                };
+
+                return JObject.FromObject(anonError);
+            }
+
+            //FUNKYKB: tracing HTML can fill up text buffer fast when this member is called repeatedly:
+            traceSource?.TraceVerbose($"{nameof(HtmlDocument.DocumentNode)}: {((bool)htmlDoc?.DocumentNode?.HasChildNodes ? "[document has child nodes]" : "[no child notes]")}");
 
             var metaTwitterImage = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:image:src']");
             traceSource?.TraceVerbose($"{nameof(metaTwitterImage)}: {metaTwitterImage?.OuterHtml ?? "[null]"}");
@@ -54,13 +72,13 @@ namespace Songhay.Social.Extensions
             {
                 isPublished = false,
                 location,
-                metaTwitterImage = metaTwitterImage?.Attributes["content"].Value,
-                metaTwitterHandle = metaTwitterHandle?.Attributes["content"].Value,
-                metaTwitterTitle = metaTwitterTitle?.Attributes["content"].Value,
-                metaTwitterDescription = metaTwitterDescription?.Attributes["content"].Value,
-                metaOgImage = metaOgImage?.Attributes["content"].Value,
-                metaOgTitle = metaOgTitle?.Attributes["content"].Value,
-                metaOgDescription = metaOgDescription?.Attributes["content"].Value,
+                metaTwitterImage = metaTwitterImage?.Attributes["content"]?.Value,
+                metaTwitterHandle = metaTwitterHandle?.Attributes["content"]?.Value,
+                metaTwitterTitle = metaTwitterTitle?.Attributes["content"]?.Value,
+                metaTwitterDescription = metaTwitterDescription?.Attributes["content"]?.Value,
+                metaOgImage = metaOgImage?.Attributes["content"]?.Value,
+                metaOgTitle = metaOgTitle?.Attributes["content"]?.Value,
+                metaOgDescription = metaOgDescription?.Attributes["content"]?.Value,
                 title = title?.InnerText
             };
 

@@ -28,8 +28,7 @@ namespace Songhay.Social.Shell.Tests
             var pathTemplate = new UriTemplate(pathExpression);
 
             var path = pathTemplate.BindByPosition(year, month)?.OriginalString;
-            path = Path.Combine(projectInfo.FullName, path);
-            path = Path.GetFullPath(path);
+            path = projectInfo.ToCombinedPath(path);
             Assert.True(File.Exists(path));
 
             using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
