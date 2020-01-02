@@ -89,15 +89,15 @@ namespace Songhay.Social.Extensions
             traceSource?.TraceVerbose($"{nameof(titleNode)}: {titleNode?.OuterHtml ?? "[null]"}");
             var title = titleNode?.InnerText;
 
-            var statusTitle = (!string.IsNullOrWhiteSpace(metaTwitterTitle)) ? metaTwitterTitle
+            var statusTitle = ((!string.IsNullOrWhiteSpace(metaTwitterTitle)) ? metaTwitterTitle
                 :
-                (!string.IsNullOrWhiteSpace(metaOgTitle)) ? metaOgTitle : title;
+                (!string.IsNullOrWhiteSpace(metaOgTitle)) ? metaOgTitle : title)?.Trim();
 
-            var statusDescription = (!string.IsNullOrWhiteSpace(metaTwitterDescription)) ? metaTwitterDescription
+            var statusDescription = ((!string.IsNullOrWhiteSpace(metaTwitterDescription)) ? metaTwitterDescription
                 :
-                metaOgDescription;
+                metaOgDescription)?.Trim();
 
-            var twitterCharacterLimit = 280 - 40; // 40 chars is the fudge factor (link shortener ~30 chars?; ~14 status chars)
+            var twitterCharacterLimit = 280 - 50; // 50 chars is the fudge factor (link shortener ~30 chars?; ~14 status chars)
             var length = ((statusTitle?.Length ?? 0) + (statusDescription?.Length ?? 0));
 
             if (length > twitterCharacterLimit)
