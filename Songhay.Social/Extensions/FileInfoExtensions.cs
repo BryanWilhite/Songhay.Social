@@ -1,6 +1,5 @@
 ﻿using ExcelDataReader;
 using HtmlAgilityPack;
-using Newtonsoft.Json.Linq;
 using Songhay.Diagnostics;
 using Songhay.Extensions;
 using Songhay.Social.Models;
@@ -29,7 +28,7 @@ namespace Songhay.Social.Extensions
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var htmlWeb = new HtmlWeb();
+            var htmlWeb = new HtmlWeb().WithChromeishUserAgent();
 
             traceSource?.WriteLine($"{nameof(PartitionSocialData)}: opening `{fileInfo.FullName}`...");
 

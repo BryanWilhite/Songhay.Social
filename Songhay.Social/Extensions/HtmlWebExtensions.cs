@@ -97,6 +97,16 @@ namespace Songhay.Social.Extensions
                 :
                 metaOgDescription;
 
+            var twitterCharacterLimit = 280 - 40; // 40 chars is the fudge factor (link shortener ~30 chars?; ~14 status chars)
+            var length = ((statusTitle?.Length ?? 0) + (statusDescription?.Length ?? 0));
+
+            if (length > twitterCharacterLimit)
+            {
+                var delta = length - twitterCharacterLimit;
+                if (delta > (statusDescription?.Length ?? 0)) statusDescription = "…";
+                else statusDescription = string.Concat(statusDescription.Substring(0, delta), "…");
+            }
+
             var status = $@"
 {HtmlEntity.DeEntitize(statusTitle)}
 
@@ -128,6 +138,15 @@ namespace Songhay.Social.Extensions
             };
 
             return JObject.FromObject(anon);
+        }
+
+        public static HtmlWeb WithChromeishUserAgent(this HtmlWeb web)
+        {
+            if (web == null) throw new NullReferenceException($"The expected {nameof(HtmlWeb)} is not here.");
+
+            // https://www.whatismybrowser.com/detect/what-http-headers-is-my-browser-sending
+            web.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36";
+            return web;
         }
     }
 }

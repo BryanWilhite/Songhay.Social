@@ -48,7 +48,7 @@ namespace Songhay.Social.Shell.Tests.Extensions
             {
                 ProgramUtility.InitializeTraceSource(listener);
 
-                jO = new HtmlWeb().ToSocialData(location);
+                jO = new HtmlWeb().WithChromeishUserAgent().ToSocialData(location);
 
                 listener.Flush();
                 this._testOutputHelper.WriteLine(writer.ToString());
