@@ -97,24 +97,28 @@ namespace Songhay.Social.Extensions
                 :
                 metaOgDescription)?.Trim();
 
+            var statusTitleAndDescription = HtmlEntity.DeEntitize($@"
+{statusTitle ?? string.Empty}
+
+{statusDescription ?? string.Empty}
+".Trim());
+
+            var tag = "#rxa 👁⚙🌩";
             var twitterCharacterLimit = 280 - 50; // 50 chars is the fudge factor (link shortener ~30 chars?; ~14 status chars)
-            var length = ((statusTitle?.Length ?? 0) + (statusDescription?.Length ?? 0));
+            var length = statusTitleAndDescription.Length;
 
             if (length > twitterCharacterLimit)
             {
-                var delta = length - twitterCharacterLimit;
-                if (delta > (statusDescription?.Length ?? 0)) statusDescription = "…";
-                else statusDescription = string.Concat(statusDescription.Substring(0, delta), "…");
+                var delta = length - twitterCharacterLimit + 1;
+                statusTitleAndDescription = string.Concat(statusTitleAndDescription.Substring(0, delta), "…");
             }
 
             var status = $@"
-{HtmlEntity.DeEntitize(statusTitle)}
-
-{HtmlEntity.DeEntitize(statusDescription ?? string.Empty)}
+{statusTitleAndDescription}
 
 {location}
 
-#rxa 👁⚙🌩
+{tag}
 ".Trim();
 
             #endregion
