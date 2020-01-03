@@ -57,6 +57,13 @@ namespace Songhay.Social.Shell.Tests
             "Tesla fired hundreds of employees following what the company said is an annual performance review process, the company told TechCrunch. The news was first reported by The Mercury News. “Like all companies, Tesla conducts an annual performance review during which a manager and employee discuss the r…",
             "Tesla has fired hundreds of employees after performance reviews &#8211; TechCrunch"
             )]
+        [InlineData(
+            "What we know so far about South Africa&#x27;s largest ever data breach",
+            "South Africa has suffered its largest data breach as millions of personal\nrecords of anyone, dead or alive, with a South African ID number (13 digit\nidentity number) have been leaked on the Internet. This was first revealed by\nsecurity consultant and researcher, Troy Hunt [https://twitter.com/troyhunt], on\n17 October 2017.\n\nHunt is also the founder of have i been pwned? [https://haveibeenpwned.com/], an\nonline service which allows you to check if you have an account, e-mail address\nor username, ",
+            "What we know so far about South Africa&#x27;s largest ever data breach",
+            "South Africa has suffered its largest data breach as millions of personal\nrecords of anyone, dead or alive, with a South African ID number (13 digit\nidentity number) have been leaked on the Internet. This was first revealed by\nsecurity consultant and researcher, Troy Hunt [https://twitter.com/troyhunt], on\n17 October 2017.\n\nHunt is also the founder of have i been pwned? [https://haveibeenpwned.com/], an\nonline service which allows you to check if you have an account, e-mail address\nor username, ",
+            "What we know so far about South Africa&#x27;s largest ever data breach"
+            )]
         public void ShouldTruncateStatus(string metaTwitterTitle,
             string metaTwitterDescription,
             string metaOgTitle,
@@ -91,6 +98,7 @@ before:
             if (length > twitterCharacterLimit)
             {
                 var delta = length - twitterCharacterLimit + 1;
+                if (delta > twitterCharacterLimit) delta = twitterCharacterLimit - 1;
                 statusTitleAndDescription = string.Concat(statusTitleAndDescription.Substring(0, delta), "…");
             }
 
@@ -101,6 +109,7 @@ after:
 
 {nameof(statusTitleAndDescription)} length: {statusTitleAndDescription.Length}
 ");
+            Assert.True(statusTitleAndDescription.Length <= twitterCharacterLimit);
         }
 
         readonly ITestOutputHelper _testOutputHelper;
