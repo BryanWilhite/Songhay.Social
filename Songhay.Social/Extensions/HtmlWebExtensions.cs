@@ -110,6 +110,7 @@ namespace Songhay.Social.Extensions
             if (length > twitterCharacterLimit)
             {
                 var delta = length - twitterCharacterLimit + 1;
+                if (delta > twitterCharacterLimit) delta = twitterCharacterLimit - 1;
                 statusTitleAndDescription = string.Concat(statusTitleAndDescription.Substring(0, delta), "…");
             }
 
