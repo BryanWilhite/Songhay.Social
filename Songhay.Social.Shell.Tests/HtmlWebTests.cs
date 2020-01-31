@@ -64,6 +64,13 @@ namespace Songhay.Social.Shell.Tests
             "South Africa has suffered its largest data breach as millions of personal\nrecords of anyone, dead or alive, with a South African ID number (13 digit\nidentity number) have been leaked on the Internet. This was first revealed by\nsecurity consultant and researcher, Troy Hunt [https://twitter.com/troyhunt], on\n17 October 2017.\n\nHunt is also the founder of have i been pwned? [https://haveibeenpwned.com/], an\nonline service which allows you to check if you have an account, e-mail address\nor username, ",
             "What we know so far about South Africa&#x27;s largest ever data breach"
             )]
+        [InlineData(
+            "Scientists Shocked As Fisheries Collapse On West Coast: &#039;It&#039;s The Worst We&#039;ve Seen&quot;",
+            "The Gulf of Alaska cod populations appears to have taken a nose-dive. Scientists are shocked at the collapse and starving fish, making this  the ",
+            null,
+            null,
+            "Scientists Shocked As Fisheries Collapse On West Coast: &#039;It&#039;s The Worst We&#039;ve Seen&quot;"
+            )]
         public void ShouldTruncateStatus(string metaTwitterTitle,
             string metaTwitterDescription,
             string metaOgTitle,
@@ -97,9 +104,7 @@ before:
 
             if (length > twitterCharacterLimit)
             {
-                var delta = length - twitterCharacterLimit + 1;
-                if (delta > twitterCharacterLimit) delta = twitterCharacterLimit - 1;
-                statusTitleAndDescription = string.Concat(statusTitleAndDescription.Substring(0, delta), "…");
+                statusTitleAndDescription = string.Concat(statusTitleAndDescription.Substring(0, twitterCharacterLimit - 1), "…");
             }
 
             this._testOutputHelper.WriteLine($@"
