@@ -45,11 +45,12 @@ namespace Songhay.Social.Extensions
 
                         while (reader.Read())
                         {
-                            ++counter;
-
                             var uri = reader.GetString(0);
-                            traceSource?.TraceVerbose($"{nameof(PartitionSocialData)}: {nameof(uri)}: {uri}");
+                            traceSource?.TraceVerbose($"{nameof(PartitionSocialData)}: {nameof(uri)}: {uri ?? "[null]"}");
+                            if (string.IsNullOrWhiteSpace(uri)) continue;
+
                             uriList.Add(uri);
+                            ++counter;
 
                             if (counter % partitionSize == 0)
                             {

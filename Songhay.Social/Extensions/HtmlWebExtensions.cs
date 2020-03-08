@@ -19,7 +19,28 @@ namespace Songhay.Social.Extensions
         public static JObject ToSocialData(this HtmlWeb web, string location)
         {
             if (web == null) throw new NullReferenceException($"The expected {nameof(HtmlWeb)} is not here.");
-            if (string.IsNullOrWhiteSpace(location)) throw new NullReferenceException($"The expected {nameof(location)} is not here.");
+            if (string.IsNullOrWhiteSpace(location))
+            {
+                var anonCatch = new
+                {
+                    errorType = nameof(NullReferenceException),
+                    errorMessage = $"The expected {nameof(location)} is not here.",
+                    hasLoadError = true,
+                    isPublished = false,
+                    location,
+                    metaTwitterImage = string.Empty,
+                    metaTwitterHandle = string.Empty,
+                    metaTwitterTitle = string.Empty,
+                    metaTwitterDescription = string.Empty,
+                    metaOgImage = string.Empty,
+                    metaOgTitle = string.Empty,
+                    metaOgDescription = string.Empty,
+                    status = string.Empty,
+                    title = string.Empty
+                };
+
+                return JObject.FromObject(anonCatch);
+            }
 
             traceSource?.WriteLine($"{nameof(ToSocialData)}: loading `{location}`...");
 
@@ -31,7 +52,7 @@ namespace Songhay.Social.Extensions
             catch (Exception ex)
             {
                 traceSource?.TraceError(ex);
-                var anonError = new
+                var anonCatch = new
                 {
                     errorType = ex.GetType().Name,
                     errorMessage = ex.Message,
@@ -49,7 +70,7 @@ namespace Songhay.Social.Extensions
                     title = string.Empty
                 };
 
-                return JObject.FromObject(anonError);
+                return JObject.FromObject(anonCatch);
             }
 
             #region set anonymous properties:
