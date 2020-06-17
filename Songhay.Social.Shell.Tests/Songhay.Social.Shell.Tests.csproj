@@ -6,17 +6,17 @@
 
   <ItemGroup>
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.17" />
-    <PackageReference Include="linqtotwitter" Version="5.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
+    <PackageReference Include="linqtotwitter" Version="5.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.7.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
-    <PackageReference Include="SonghayCore.xUnit" Version="3.0.18" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.6.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.14.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+    <PackageReference Include="SonghayCore.xUnit" Version="3.0.19" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.1" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
     <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
