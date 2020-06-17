@@ -43,9 +43,9 @@ steps:
     arguments: '--configuration $(BuildConfiguration)'
 
 - task: mattlabrum.build-task.custom-build-task.downloadsSecureFile@0
-  displayName: 'Download Secure File 7b7b494f-fe60-4ad6-90dc-f2abc430f4d6'
+  displayName: 'Download Secure File 36693689-8cae-422c-a5c1-d45fd27404c5'
   inputs:
-    fileInput: '7b7b494f-fe60-4ad6-90dc-f2abc430f4d6'
+    fileInput: '36693689-8cae-422c-a5c1-d45fd27404c5'
     targetPath: $(RepoName).Web
 
 - task: DotNetCoreCLI@2
