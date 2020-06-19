@@ -12,7 +12,6 @@ trigger:
     - releases/*
   paths:
     exclude:
-    - /azure*.yml
     - $(RepoName).Activities.Tests/*
     - $(RepoName).Repository.Tests/*
     - $(RepoName).Shell.Tests/*
@@ -20,9 +19,6 @@ trigger:
 
 resources:
 - repo: self
-
-queue:
-  name: Hosted VS2017
 
 steps:
 - task: DotNetCoreInstaller@0
@@ -42,11 +38,11 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
-- task: mattlabrum.build-task.custom-build-task.downloadsSecureFile@0
-  displayName: 'Download Secure File 36693689-8cae-422c-a5c1-d45fd27404c5'
+- task: downloadsSecureFile@0
   inputs:
-    fileInput: '36693689-8cae-422c-a5c1-d45fd27404c5'
-    targetPath: $(RepoName).Web
+    fileInput: 'ba7c05e4-8c8b-45fd-b72d-2d3d0ba92341'
+    targetPath: $(RepoName).Tests
+    targetName: 'app-settings.songhay-system.json'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet test [Web]'
