@@ -41,7 +41,7 @@ steps:
 - task: downloadsSecureFile@0
   inputs:
     fileInput: 'ba7c05e4-8c8b-45fd-b72d-2d3d0ba92341'
-    targetPath: $(RepoName).Web.Tests
+    targetPath: $(RepoName).Web
     targetName: 'app-settings.songhay-system.json'
 
 - task: DotNetCoreCLI@2
