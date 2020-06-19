@@ -5,7 +5,7 @@ variables:
   RepoName: 'Songhay.Social'
 
 trigger:
-  batch: false
+  batch: 'false'
   branches:
     include:
     - master
