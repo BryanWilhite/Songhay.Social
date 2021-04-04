@@ -12,8 +12,6 @@ trigger:
     - releases/*
   paths:
     exclude:
-    - $(RepoName).Activities.Tests/*
-    - $(RepoName).Repository.Tests/*
     - $(RepoName).Shell.Tests/*
     - $(RepoName).Tests/*
 
@@ -21,10 +19,12 @@ resources:
 - repo: self
 
 steps:
-- task: DotNetCoreInstaller@0
-  displayName: 'Use .NET Core SDK 2.2.402'
+
+- task: UseDotNet@2
+  displayName: 'Use .NET Core SDK 5.x'
   inputs:
-    version: 2.2.402
+    packageType: sdk
+    version: 5.x
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet restore'
@@ -37,27 +37,3 @@ steps:
   inputs:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
-
-- task: downloadsSecureFile@0
-  inputs:
-    fileInput: '3778f6bc-1815-4b14-9690-42eef6466ddf'
-    targetPath: $(RepoName).Web
-    targetName: 'app-settings.songhay-system.json'
-
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet test [Web]'
-  inputs:
-    command: test
-    projects: '**/$(RepoName).Web.Tests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet publish'
-  inputs:
-    command: publish
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
