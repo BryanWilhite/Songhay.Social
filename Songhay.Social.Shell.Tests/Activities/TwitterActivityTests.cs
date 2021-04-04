@@ -17,7 +17,7 @@ namespace Songhay.Social.Shell.Tests.Activities
         {
             this._testOutputHelper = helper;
 
-            var projectRoot = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
+            var projectRoot = ProgramAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
             var projectInfo = new DirectoryInfo(projectRoot);
             Assert.True(projectInfo.Exists);
 

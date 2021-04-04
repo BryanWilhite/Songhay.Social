@@ -38,7 +38,7 @@ namespace Songhay.Social.Shell.Tests.Extensions
             "https://www.wired.com/story/smoke-from-wildfires-is-a-growing-public-health-crisis-for-cities/")]
         public void ToSocialData_Test(string target, string location)
         {
-            target = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, target);
+            target = ProgramAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, target);
             Assert.True(File.Exists(target));
 
             JObject jO = null;

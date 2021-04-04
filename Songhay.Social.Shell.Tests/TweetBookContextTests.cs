@@ -21,7 +21,7 @@ namespace Songhay.Social.Shell.Tests
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var projectRoot = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
+            var projectRoot = ProgramAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
             var projectInfo = new DirectoryInfo(projectRoot);
             Assert.True(projectInfo.Exists);
 

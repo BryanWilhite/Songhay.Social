@@ -16,7 +16,7 @@ namespace Songhay.Social.Models
             var uriBuilder = new UriBuilder(baseUri).WithPath($"{data.User.ScreenNameResponse}.{lastSegment}");
 
             this.ProfileImageUrl = uriBuilder.Uri.OriginalString;
-            FrameworkTypeUtility.SetProperties(data, this);
+            ProgramTypeUtility.SetProperties(data, this);
         }
 
         public string ProfileImageUrl { get; private set; }

@@ -39,7 +39,7 @@ namespace Songhay.Social.Shell.Tests.Extensions
             "../../../../../azure-storage-accounts/songhaystorage/social-twitter")]
         public void PartitionSocialData_Test(string pathExpression, string year, string month, int partitionSize, string targetRoot)
         {
-            var projectRoot = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
+            var projectRoot = ProgramAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
             var projectInfo = new DirectoryInfo(projectRoot);
             Assert.True(projectInfo.Exists);
 
@@ -49,7 +49,7 @@ namespace Songhay.Social.Shell.Tests.Extensions
             path = projectInfo.ToCombinedPath(path);
             Assert.True(File.Exists(path));
 
-            targetRoot = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, targetRoot);
+            targetRoot = ProgramAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, targetRoot);
             var targetRootInfo = new DirectoryInfo(targetRoot);
             Assert.True(targetRootInfo.Exists);
 

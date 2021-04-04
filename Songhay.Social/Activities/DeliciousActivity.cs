@@ -30,9 +30,9 @@ namespace Songhay.Social.Activities
                     var A = XElement.Parse(line);
                     var link = new DeliciousLink
                     {
-                        AddDate = FrameworkTypeUtility.ConvertDateTimeFromUnixTime(Convert.ToDouble(A.Attribute("ADD_DATE").Value)),
+                        AddDate = ProgramTypeUtility.ConvertDateTimeFromUnixTime(Convert.ToDouble(A.Attribute("ADD_DATE").Value)),
                         Href = new Uri(A.Attribute("HREF").Value, UriKind.Absolute),
-                        IsPrivate = FrameworkTypeUtility.ParseBoolean(A.Attribute("PRIVATE").Value).GetValueOrDefault(),
+                        IsPrivate = ProgramTypeUtility.ParseBoolean(A.Attribute("PRIVATE").Value).GetValueOrDefault(),
                         Tags = A.Attribute("TAGS").Value,
                         Title = A.Value
                     };

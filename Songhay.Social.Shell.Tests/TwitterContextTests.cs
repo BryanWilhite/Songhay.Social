@@ -20,7 +20,7 @@ namespace Songhay.Social.Shell.Tests
         {
             this._testOutputHelper = helper;
 
-            var projectRoot = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
+            var projectRoot = ProgramAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../");
             var projectInfo = new DirectoryInfo(projectRoot);
             Assert.True(projectInfo.Exists);
 
@@ -131,7 +131,7 @@ namespace Songhay.Social.Shell.Tests
         [InlineData(@"azure-storage-accounts\songhay\shared-social-twitter\", "BryanWilhite,Kintespace", 50)]
         public async Task ShouldWriteProfileImages(string profileImageFolder, string screenNames, int count)
         {
-            var root = FrameworkAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../../../");
+            var root = ProgramAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, "../../../../../");
             var rootInfo = new DirectoryInfo(root);
 
             profileImageFolder = rootInfo.ToCombinedPath(profileImageFolder);
