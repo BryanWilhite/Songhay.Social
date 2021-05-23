@@ -34,7 +34,7 @@ namespace Songhay.Social.Shell.Tests.Extensions
         [InlineData(
             "./TweetBooks/TweetBook-{year}-{month}.xlsx",
             "2021",
-            "03",
+            "04",
             7,
             "../../../../../azure-storage-accounts/songhaystorage/social-twitter")]
         public void PartitionSocialData_Test(string pathExpression, string year, string month, int partitionSize, string targetRoot)
