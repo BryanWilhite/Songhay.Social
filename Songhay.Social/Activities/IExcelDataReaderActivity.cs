@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using ExcelDataReader;
 using Newtonsoft.Json.Linq;
 using Songhay.Diagnostics;
@@ -58,6 +59,8 @@ namespace Songhay.Social.Activities
 
             if (partitionSize == 0) partitionSize = 10;
 
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             using var stream = File.Open(excelPath, FileMode.Open, FileAccess.Read);
             using var reader = ExcelReaderFactory.CreateReader(stream);
 
@@ -81,22 +84,27 @@ namespace Songhay.Social.Activities
                     {
                         traceSource?.TraceVerbose($"{nameof(PartitionRows)}: partitioning [{nameof(partitionSize)}: {partitionSize}]...");
 
-                        this.SavePartition(uriList, partitionRoot, counter);
+                        this.SavePartition(uriList, partitionRoot, reader.Name, counter);
 
                         uriList.Clear();
                     }
 
                     traceSource?.TraceVerbose($"{nameof(PartitionRows)}: partitioning [final partition count: {uriList?.Count ?? 0}]...");
-                    this.SavePartition(uriList, partitionRoot, counter);
+                    this.SavePartition(uriList, partitionRoot, reader.Name, counter);
                 }
 
             } while (reader.NextResult());
         }
 
-        internal void SavePartition(IEnumerable<string> partition, string partitionRoot, int partitionCount)
+        internal void SavePartition(IEnumerable<string> partition, string partitionRoot, string partitionDirectory, int partitionCount)
         {
             var jPartition = JArray.FromObject(partition);
             var fileName = $"excel-row-partition-{partitionCount:00}.json";
+
+            partitionRoot = ProgramFileUtility.GetCombinedPath(partitionRoot, partitionDirectory);
+
+            Directory.CreateDirectory(partitionRoot);
+
             var path = ProgramFileUtility.GetCombinedPath(partitionRoot, fileName);
             File.WriteAllText(path, jPartition.ToString());
         }
