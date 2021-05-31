@@ -26,7 +26,7 @@ namespace Songhay.Social.Activities
 
         public void Start(ProgramArgs args)
         {
-            throw new NotImplementedException();
+            traceSource?.WriteLine($"{nameof(UniformResourceActivity)} starting...");
         }
 
         internal void GenerateTwitterPartitions(string [] uris)
@@ -40,5 +40,8 @@ namespace Songhay.Social.Activities
                 .Select(htmlWeb.ToSocialData)?
                 .Where(i => i != null).ToArray();
         }
+
+        internal const string argJson = "--json";
+        internal const string argJsonFile = "--json-file";
     }
 }

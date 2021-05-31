@@ -15,6 +15,10 @@ namespace Songhay.Social
                     new Lazy<IActivity>(() => new Activities.DeliciousActivity())
                 },
                 {
+                    nameof(Activities.IExcelDataReaderActivity),
+                    new Lazy<IActivity>(() => new Activities.IExcelDataReaderActivity())
+                },
+                {
                     nameof(Activities.UniformResourceActivity),
                     new Lazy<IActivity>(() => new Activities.UniformResourceActivity())
                 }
