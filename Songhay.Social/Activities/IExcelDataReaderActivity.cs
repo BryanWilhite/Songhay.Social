@@ -88,10 +88,10 @@ namespace Songhay.Social.Activities
 
                         uriList.Clear();
                     }
-
-                    traceSource?.TraceVerbose($"{nameof(PartitionRows)}: partitioning [final partition count: {uriList?.Count ?? 0}]...");
-                    this.SavePartition(uriList, partitionRoot, reader.Name, counter);
                 }
+
+                traceSource?.TraceVerbose($"{nameof(PartitionRows)}: partitioning [final partition count: {uriList?.Count ?? 0}]...");
+                this.SavePartition(uriList, partitionRoot, reader.Name, counter);
 
             } while (reader.NextResult());
         }
