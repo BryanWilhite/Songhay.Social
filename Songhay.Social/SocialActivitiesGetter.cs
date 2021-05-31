@@ -15,8 +15,8 @@ namespace Songhay.Social
                     new Lazy<IActivity>(() => new Activities.DeliciousActivity())
                 },
                 {
-                    nameof(Activities.TwitterActivity),
-                    new Lazy<IActivity>(() => new Activities.TwitterActivity())
+                    nameof(Activities.UniformResourceActivity),
+                    new Lazy<IActivity>(() => new Activities.UniformResourceActivity())
                 }
             });
         }
