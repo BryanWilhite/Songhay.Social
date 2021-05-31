@@ -8,9 +8,9 @@ using Xunit.Abstractions;
 
 namespace Songhay.Social.Shell.Tests
 {
-    public class TweetBookContextTests
+    public class ExcelDataReaderTests
     {
-        public TweetBookContextTests(ITestOutputHelper helper)
+        public ExcelDataReaderTests(ITestOutputHelper helper)
         {
             this._testOutputHelper = helper;
         }

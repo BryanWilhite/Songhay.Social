@@ -8,7 +8,7 @@ using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Songhay.Social.Shell.Tests.Extensions
+namespace Songhay.Social.Tests.Extensions
 {
     public class HtmlWebExtensionsTests
     {
