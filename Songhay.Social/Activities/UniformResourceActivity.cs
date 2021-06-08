@@ -3,14 +3,14 @@ using Songhay.Diagnostics;
 using Songhay.Extensions;
 using Songhay.Models;
 using Songhay.Social.Extensions;
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 
 namespace Songhay.Social.Activities
 {
-    public class UniformResourceActivity : IActivity
+    public class UniformResourceActivity : IActivityWithOutput<string, string>
     {
         static UniformResourceActivity() => traceSource = TraceSources
             .Instance
@@ -21,15 +21,35 @@ namespace Songhay.Social.Activities
 
         public string DisplayHelp(ProgramArgs args)
         {
-            throw new NotImplementedException();
+            args.WithDefaultHelpText();
+
+            args.HelpSet.Remove(ProgramArgs.BasePath);
+            args.HelpSet.Remove(ProgramArgs.BasePathRequired);
+            args.HelpSet.Remove(ProgramArgs.OutputUnderBasePath);
+            args.HelpSet.Remove(ProgramArgs.SettingsFile);
+
+            return args.ToHelpDisplayText();
         }
 
         public void Start(ProgramArgs args)
         {
-            traceSource?.WriteLine($"{nameof(UniformResourceActivity)} starting...");
+            var json = args.GetStringInput();
+
+            var output = this.StartForOutput(json);
+
+            args.WriteOutputToFile(output);
         }
 
-        internal void GenerateTwitterPartitions(string [] uris)
+        public string StartForOutput(string json)
+        {
+            traceSource?.WriteLine($"{nameof(UniformResourceActivity)} starting...");
+
+            var uris = JsonSerializer.Deserialize<string[]>(json);
+
+            return this.GenerateTwitterPartitions(uris);
+        }
+
+        internal string GenerateTwitterPartitions(string[] uris)
         {
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -39,9 +59,8 @@ namespace Songhay.Social.Activities
             var jPartition = uris
                 .Select(htmlWeb.ToSocialData)?
                 .Where(i => i != null).ToArray();
-        }
 
-        internal const string argJson = "--json";
-        internal const string argJsonFile = "--json-file";
+            return jPartition?.ToString();
+        }
     }
 }
