@@ -1,5 +1,6 @@
 using System.IO;
 using Songhay.Extensions;
+using Songhay.Models;
 using Songhay.Social.Activities;
 using Tavis.UriTemplates;
 using Xunit;
@@ -12,6 +13,16 @@ namespace Songhay.Social.Tests.Activities
         public IExcelDataReaderActivityTests(ITestOutputHelper helper)
         {
             this._testOutputHelper = helper;
+        }
+
+        [Fact]
+        public void DisplayHelp_Test()
+        {
+            var activity = new IExcelDataReaderActivity();
+
+            var actual = activity.DisplayHelp(new ProgramArgs(new[] { ProgramArgs.Help }));
+            Assert.False(string.IsNullOrWhiteSpace(actual));
+            this._testOutputHelper.WriteLine(actual);
         }
 
         [Theory]

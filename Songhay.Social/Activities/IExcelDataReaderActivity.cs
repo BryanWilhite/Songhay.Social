@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using ExcelDataReader;
 using Newtonsoft.Json.Linq;
@@ -22,7 +23,13 @@ namespace Songhay.Social.Activities
 
         public string DisplayHelp(ProgramArgs args)
         {
-            throw new System.NotImplementedException();
+            if(args.HelpSet.Any()) return args.ToHelpDisplayText();
+
+            args.HelpSet.Add(argExcelFile, "The absolute path to Excel-file input.");
+            args.HelpSet.Add(argPartitionRoot, "The absolute path to Excel-file partition output Directory.");
+            args.HelpSet.Add(argPartitionSize, "The size of Excel-file output partitions.");
+
+            return args.ToHelpDisplayText();
         }
 
         public void Start(ProgramArgs args)
