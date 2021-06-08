@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
 using Songhay.Diagnostics;
 using Songhay.Extensions;
 using Songhay.Models;
@@ -56,9 +57,10 @@ namespace Songhay.Social.Activities
 
             var htmlWeb = new HtmlWeb().WithChromeishUserAgent();
 
-            var jPartition = uris
+            var jPartition = new JArray(uris
                 .Select(htmlWeb.ToSocialData)?
-                .Where(i => i != null).ToArray();
+                .Where(i => i != null)
+                .ToArray());
 
             return jPartition?.ToString();
         }
