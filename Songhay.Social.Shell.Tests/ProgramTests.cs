@@ -1,6 +1,8 @@
 using System.IO;
 using Songhay.Extensions;
+using Songhay.Models;
 using Songhay.Social.Activities;
+using Songhay.Tests;
 using Tavis.UriTemplates;
 using Xunit;
 using Xunit.Abstractions;
@@ -42,6 +44,23 @@ namespace Songhay.Social.Shell.Tests
                 IExcelDataReaderActivity.argExcelFile, excelPath,
                 IExcelDataReaderActivity.argPartitionRoot, partitionRoot,
                 IExcelDataReaderActivity.argPartitionSize, $"{partitionSize}",
+            };
+
+            Program.Run(args);
+        }
+
+
+        [Theory]
+        [ProjectFileData(typeof(ProgramTests),
+            "../../../json/UniformResourceActivity_Test_input.json",
+            "../../../json/UniformResourceActivity_Test_output.json")]
+        public void UniformResourceActivity_Test(FileInfo inputInfo, FileInfo outputInfo)
+        {
+            var args = new []
+            {
+                nameof(UniformResourceActivity),
+                ProgramArgs.InputFile, inputInfo.FullName,
+                ProgramArgs.OutputFile, outputInfo.FullName,
             };
 
             Program.Run(args);
