@@ -36,28 +36,9 @@ namespace Songhay.Social.Activities
         {
             traceSource?.WriteLine($"{nameof(IExcelDataReaderActivity)} starting...");
 
-            if (
-                    args.HasArg(argExcelFile, requiresValue: true) &&
-                    args.HasArg(argPartitionRoot, requiresValue: true) &&
-                    args.HasArg(argPartitionSize, requiresValue: true)
-                )
-            {
-                var excelPath = args.GetArgValue(argExcelFile);
-                if (!File.Exists(excelPath))
-                {
-                    throw new FileNotFoundException($"The expected Excel file, `{excelPath ?? "[null]"}`, is not here.");
-                }
+            var (excelPath, partitionSize, partitionRoot) = this.ProcessArgs(args);
 
-                string partitionRoot = args.GetArgValue(argPartitionRoot);
-                if (!Directory.Exists(partitionRoot))
-                {
-                    throw new DirectoryNotFoundException($"The expected Excel-file partition root, `{partitionRoot ?? "[null]"}`, is not here.");
-                }
-
-                int partitionSize = Convert.ToInt32(args.GetArgValue(argPartitionSize));
-
-                this.PartitionRows(excelPath, partitionSize, partitionRoot);
-            }
+            this.PartitionRows(excelPath, partitionSize, partitionRoot);
         }
 
         internal void PartitionRows(string excelPath, int partitionSize, string partitionRoot)
@@ -101,6 +82,25 @@ namespace Songhay.Social.Activities
                 this.SavePartition(uriList, partitionRoot, reader.Name, counter);
 
             } while (reader.NextResult());
+        }
+
+        internal (string excelPath, int partitionSize, string partitionRoot) ProcessArgs(ProgramArgs args)
+        {
+            var excelPath = args.GetArgValue(argExcelFile);
+            if (!File.Exists(excelPath))
+            {
+                throw new FileNotFoundException($"The expected Excel file, `{excelPath ?? "[null]"}`, is not here.");
+            }
+
+            string partitionRoot = args.GetArgValue(argPartitionRoot);
+            if (!Directory.Exists(partitionRoot))
+            {
+                throw new DirectoryNotFoundException($"The expected Excel-file partition root, `{partitionRoot ?? "[null]"}`, is not here.");
+            }
+
+            int partitionSize = Convert.ToInt32(args.GetArgValue(argPartitionSize));
+
+            return (excelPath, partitionSize, partitionRoot);
         }
 
         internal void SavePartition(IEnumerable<string> partition, string partitionRoot, string partitionDirectory, int partitionCount)

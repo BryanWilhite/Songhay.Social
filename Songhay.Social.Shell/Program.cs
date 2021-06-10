@@ -25,8 +25,7 @@ namespace Songhay.Social.Shell
         internal static void Run(string[] args)
         {
             var configuration = ProgramUtility.LoadConfiguration(
-                Directory.GetCurrentDirectory(),
-                builderModifier => builderModifier.AddJsonFile($"./{AppScalars.ConventionalSettingsFile}")
+                Directory.GetCurrentDirectory()
             );
 
             TraceSources.ConfiguredTraceSourceName = configuration[DeploymentEnvironment.DefaultTraceSourceNameConfigurationKey];
