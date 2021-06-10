@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "dotnet build",
             "command": "dotnet",
             "type": "shell",
             "args": ["build", "${workspaceFolder}/Songhay.Social.sln"],
@@ -19,6 +19,24 @@
                 "--logger:trx",
                 "--results-directory:${workspaceFolder}/TestResults",
                 "--verbosity:normal"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "dotnet publish [Songhay.Social.Shell, linux-x64]",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "publish",
+                "${workspaceFolder}/Songhay.Social.Shell/Songhay.Social.Shell.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary",
+                "--configuration",
+                "Release",
+                "--self-contained",
+                "false",
+                "--runtime",
+                "linux-x64"
             ],
             "problemMatcher": "$msCompile"
         },
