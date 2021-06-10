@@ -9,18 +9,22 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "test [Songhay.Social.Shell.Tests, filtered by selected text]",
+            "label": "dotnet build [Release]",
             "command": "dotnet",
             "type": "shell",
             "args": [
-                "test",
-                "${workspaceFolder}/Songhay.Social.Shell.Tests/Songhay.Social.Shell.Tests.csproj",
-                "--filter:${selectedText}",
-                "--logger:trx",
-                "--results-directory:${workspaceFolder}/TestResults",
-                "--verbosity:normal"
+                "build",
+                "--configuration",
+                "Release"
             ],
-            "problemMatcher": "$msCompile"
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$msCompile",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
         },
         {
             "label": "dotnet publish [Songhay.Social.Shell, linux-x64]",
@@ -37,6 +41,20 @@
                 "false",
                 "--runtime",
                 "linux-x64"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "dotnet test [Songhay.Social.Shell.Tests, filtered by selected text]",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "test",
+                "${workspaceFolder}/Songhay.Social.Shell.Tests/Songhay.Social.Shell.Tests.csproj",
+                "--filter:${selectedText}",
+                "--logger:trx",
+                "--results-directory:${workspaceFolder}/TestResults",
+                "--verbosity:normal"
             ],
             "problemMatcher": "$msCompile"
         },

@@ -1,11 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\Songhay.Social\Songhay.Social.csproj" />
-  </ItemGroup>
-
   <PropertyGroup>
-    <AssemblyVersion>5.0.2021.531</AssemblyVersion>
+    <AssemblyVersion>5.0.2021.609</AssemblyVersion>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
@@ -14,6 +10,10 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Songhay.Social\Songhay.Social.csproj" />
   </ItemGroup>
 
 </Project>

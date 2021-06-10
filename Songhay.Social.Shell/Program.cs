@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using Songhay.Diagnostics;
+﻿using Songhay.Diagnostics;
 using Songhay.Extensions;
 using Songhay.Models;
-using Songhay.Social.Models;
 using System;
 using System.IO;
 using System.Reflection;
