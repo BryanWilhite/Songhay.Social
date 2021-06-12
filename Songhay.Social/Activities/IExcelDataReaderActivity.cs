@@ -72,14 +72,14 @@ namespace Songhay.Social.Activities
                     {
                         traceSource?.TraceVerbose($"{nameof(PartitionRows)}: partitioning [{nameof(partitionSize)}: {partitionSize}]...");
 
-                        this.SavePartition(uriList, partitionRoot, reader.Name, counter);
+                        this.SavePartition(uriList, excelPath, partitionRoot, reader.Name, counter);
 
                         uriList.Clear();
                     }
                 }
 
                 traceSource?.TraceVerbose($"{nameof(PartitionRows)}: partitioning [final partition count: {uriList?.Count ?? 0}]...");
-                this.SavePartition(uriList, partitionRoot, reader.Name, counter);
+                this.SavePartition(uriList, excelPath, partitionRoot, reader.Name, counter);
 
             } while (reader.NextResult());
         }
@@ -103,10 +103,11 @@ namespace Songhay.Social.Activities
             return (excelPath, partitionSize, partitionRoot);
         }
 
-        internal void SavePartition(IEnumerable<string> partition, string partitionRoot, string partitionDirectory, int partitionCount)
+        internal void SavePartition(IEnumerable<string> partition, string excelPath, string partitionRoot, string partitionDirectory, int partitionCount)
         {
             var jPartition = JArray.FromObject(partition);
-            var fileName = $"excel-row-partition-{partitionCount:00}.json";
+            var excelFileName = Path.GetFileNameWithoutExtension(excelPath);
+            var fileName = $"{excelFileName.ToLowerInvariant()}-{partitionDirectory.ToLowerInvariant()}-partition-{partitionCount:000}.json";
 
             partitionRoot = ProgramFileUtility.GetCombinedPath(partitionRoot, partitionDirectory);
 
