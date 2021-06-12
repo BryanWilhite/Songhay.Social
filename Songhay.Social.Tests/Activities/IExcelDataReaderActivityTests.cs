@@ -27,7 +27,7 @@ namespace Songhay.Social.Tests.Activities
 
         [Theory]
         [InlineData(
-            "./TweetBooks/TweetBook-{year}-{month}.xlsx", 2021, 4, 7,
+            "./TweetBooks/TweetBook-{year}-{month}.xlsx", 2018, 5, 7,
             "./json/PartitionRows_Test_output")]
         public void PartitionRows_Test(string pathExpression, int year, int month, int partitionSize, string partitionRoot)
         {
