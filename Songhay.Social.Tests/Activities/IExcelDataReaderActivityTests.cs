@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.IO;
+using Songhay.Diagnostics;
 using Songhay.Extensions;
 using Songhay.Models;
 using Songhay.Social.Activities;
@@ -10,6 +12,19 @@ namespace Songhay.Social.Tests.Activities
 {
     public class IExcelDataReaderActivityTests
     {
+        static IExcelDataReaderActivityTests()
+        {
+            TraceSources.ConfiguredTraceSourceName = $"trace-{nameof(IExcelDataReaderActivityTests)}";
+
+            traceSource = TraceSources
+                .Instance
+                .GetTraceSourceFromConfiguredName()
+                .WithSourceLevels();
+        }
+
+        static TraceSource traceSource;
+
+
         public IExcelDataReaderActivityTests(ITestOutputHelper helper)
         {
             this._testOutputHelper = helper;
@@ -53,8 +68,16 @@ namespace Songhay.Social.Tests.Activities
                 directory.Delete(recursive: true);
             }
 
-            var activity = new IExcelDataReaderActivity();
-            activity.PartitionRows(excelPath, partitionSize, partitionRoot);
+            using (var writer = new StringWriter())
+            using (var listener = new TextWriterTraceListener(writer))
+            {
+                ProgramUtility.InitializeTraceSource(listener);
+
+                var activity = new IExcelDataReaderActivity();
+                activity.PartitionRows(excelPath, partitionSize, partitionRoot);
+
+                this._testOutputHelper.WriteLine(writer.ToString());
+            }
         }
 
         readonly ITestOutputHelper _testOutputHelper;
