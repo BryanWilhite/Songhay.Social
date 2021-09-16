@@ -12,8 +12,8 @@
     "metaOgImage": null,
     "metaOgTitle": null,
     "metaOgDescription": null,
-    "status": "https://www.thurrott.com/hardware/248172/amd-launches-ryzen-pro-5000-series-mobile-processors?utm_source=rss&utm_medium=rss&utm_campaign=amd-launches-ryzen-pro-5000-series-mobile-processors\n\n#rxa 👁⚙🌩",
-    "title": null
+    "status": "Please Wait... | Cloudflare\n\nhttps://www.thurrott.com/hardware/248172/amd-launches-ryzen-pro-5000-series-mobile-processors?utm_source=rss&utm_medium=rss&utm_campaign=amd-launches-ryzen-pro-5000-series-mobile-processors\n\n#rxa 👁⚙🌩",
+    "title": "Please Wait... | Cloudflare"
   },
   {
     "errorType": "",
@@ -64,20 +64,20 @@
     "title": "Using OpenApiReference To Generate Open API Client Code"
   },
   {
-    "errorType": "",
-    "errorMessage": "",
-    "hasLoadError": false,
+    "errorType": "HttpRequestException",
+    "errorMessage": "The SSL connection could not be established, see inner exception.",
+    "hasLoadError": true,
     "isPublished": false,
     "location": "https://launchyourapp.meezeeworkouts.com/2021/03/why-we-dont-use-docker-we-dont-need-it.html?m=1",
-    "metaTwitterImage": null,
-    "metaTwitterHandle": null,
-    "metaTwitterTitle": null,
-    "metaTwitterDescription": null,
-    "metaOgImage": "https://1.bp.blogspot.com/-jzH3lfGdlvA/YEuDIUgf6MI/AAAAAAAAALg/lVKC8nDelM8mIsAlT-lvBaBaFHAR7CMYQCLcBGAsYHQ/w1200-h630-p-k-no-nu/1%2BJUOITpaBdlrMP9D__-K5Fw.png",
-    "metaOgTitle": "Why We Don’t Use Docker (We Don’t Need It)",
-    "metaOgDescription": "UPDATE: minor edits to mention that we do have a dedicated build server after this got posted to reddit. This might end up getting a lot of ...",
-    "status": "Why We Don’t Use Docker (We Don’t Need It)\n\nUPDATE: minor edits to mention that we do have a dedicated build server after this got posted to reddit. This might end up getting a lot of ...\n\nhttps://launchyourapp.meezeeworkouts.com/2021/03/why-we-dont-use-docker-we-dont-need-it.html?m=1\n\n#rxa 👁⚙🌩",
-    "title": "Launch Your App: Why We Don&#8217;t Use Docker (We Don&#8217;t Need It)"
+    "metaTwitterImage": "",
+    "metaTwitterHandle": "",
+    "metaTwitterTitle": "",
+    "metaTwitterDescription": "",
+    "metaOgImage": "",
+    "metaOgTitle": "",
+    "metaOgDescription": "",
+    "status": "",
+    "title": ""
   },
   {
     "errorType": "",
@@ -105,10 +105,10 @@
     "metaTwitterHandle": "@github",
     "metaTwitterTitle": null,
     "metaTwitterDescription": null,
-    "metaOgImage": "https://github.blog/wp-content/uploads/2021/03/git-2-31-0-release-banner.jpeg?fit=1200%2C630",
-    "metaOgTitle": "Highlights from Git 2.31 | The GitHub Blog",
+    "metaOgImage": "https://github.blog/wp-content/uploads/2021/03/git-2-31-0-release-banner.jpeg",
+    "metaOgTitle": "Highlights from Git 2.31",
     "metaOgDescription": "The open source Git project just released Git 2.31. Join us in taking a look at some of the most interesting features and changes.",
-    "status": "Highlights from Git 2.31 | The GitHub Blog\n\nThe open source Git project just released Git 2.31. Join us in taking a look at some of the most interesting features and changes.\n\nhttps://github.blog/2021-03-15-highlights-from-git-2-31/\n\n#rxa 👁⚙🌩",
+    "status": "Highlights from Git 2.31\n\nThe open source Git project just released Git 2.31. Join us in taking a look at some of the most interesting features and changes.\n\nhttps://github.blog/2021-03-15-highlights-from-git-2-31/\n\n#rxa 👁⚙🌩",
     "title": "Highlights from Git 2.31 | The GitHub Blog"
   }
 ]

@@ -1,12 +1,16 @@
 {
+  "errorType": "",
+  "errorMessage": "",
+  "hasLoadError": false,
   "isPublished": false,
   "location": "https://codeopinion.com/avoiding-nullreferenceexception/",
   "metaTwitterImage": null,
   "metaTwitterHandle": "@codeopinion",
-  "metaTwitterTitle": "Avoiding the NullReferenceException - CodeOpinion",
-  "metaTwitterDescription": "The most common exception encountered is the NullReferenceExeption. See how to use an option/maybe type in C# to start avoiding the NullreferenceEception.",
+  "metaTwitterTitle": null,
+  "metaTwitterDescription": null,
   "metaOgImage": "https://codeopinion.com/wp-content/uploads/2017/10/brace-yourself-nullreferenceexception-incoming-300x225.jpg",
-  "metaOgTitle": "Avoiding the NullReferenceException - CodeOpinion",
-  "metaOgDescription": "The most common exception encountered is the NullReferenceExeption. See how to use an option/maybe type in C# to start avoiding the NullreferenceEception.",
+  "metaOgTitle": "Avoiding the NullReferenceException",
+  "metaOgDescription": "Easily, by a landslide, the most common exception I&#039;ve run into in C# is the NullReferenceException.  Second would be an InvalidOperationException.  But",
+  "status": "Avoiding the NullReferenceException\n\nEasily, by a landslide, the most common exception I've run into in C# is the NullReferenceException.  Second would be an InvalidOperationException.  But\n\nhttps://codeopinion.com/avoiding-nullreferenceexception/\n\n#rxa 👁⚙🌩",
   "title": "Avoiding the NullReferenceException - CodeOpinion"
 }

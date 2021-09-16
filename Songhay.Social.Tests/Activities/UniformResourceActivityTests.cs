@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Songhay.Models;
 using Songhay.Social.Activities;
 using Songhay.Tests;
@@ -29,13 +30,13 @@ namespace Songhay.Social.Tests.Activities
         [ProjectFileData(typeof(UniformResourceActivityTests),
             "../../../json/GenerateTwitterPartitions_Test_input.json",
             "../../../json/GenerateTwitterPartitions_Test_output.json")]
-        public void GenerateTwitterPartitions_Test(FileInfo inputInfo, FileInfo outputInfo)
+        public async Task GenerateTwitterPartitions_Test(FileInfo inputInfo, FileInfo outputInfo)
         {
             var uris = JsonSerializer
                 .Deserialize<string[]>(File.ReadAllText(inputInfo.FullName));
 
             var activity = new UniformResourceActivity();
-            var output = activity.GenerateTwitterPartitions(uris);
+            var output = await activity.GenerateTwitterPartitionAsync(uris);
 
             Assert.False(string.IsNullOrWhiteSpace(output));
             this._testOutputHelper.WriteLine(output);

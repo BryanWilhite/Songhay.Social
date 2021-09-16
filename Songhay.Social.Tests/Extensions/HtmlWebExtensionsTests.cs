@@ -1,10 +1,13 @@
 ﻿using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
+using Polly;
 using Songhay.Diagnostics;
 using Songhay.Extensions;
+using Songhay.Social.Activities;
 using Songhay.Social.Extensions;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -24,6 +27,8 @@ namespace Songhay.Social.Tests.Extensions
 
         static TraceSource traceSource;
 
+        static readonly AsyncPolicy retryPolicy = UniformResourceActivity.retryPolicy; 
+
         public HtmlWebExtensionsTests(ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
@@ -36,7 +41,7 @@ namespace Songhay.Social.Tests.Extensions
         [InlineData(
             "../../../json/social-twitter/kinte-space/social-data-test.json",
             "https://www.wired.com/story/smoke-from-wildfires-is-a-growing-public-health-crisis-for-cities/")]
-        public void ToSocialData_Test(string target, string location)
+        public async Task ToSocialData_Test(string target, string location)
         {
             target = ProgramAssemblyUtility.GetPathFromAssembly(this.GetType().Assembly, target);
             Assert.True(File.Exists(target));
@@ -48,7 +53,7 @@ namespace Songhay.Social.Tests.Extensions
             {
                 ProgramUtility.InitializeTraceSource(listener);
 
-                jO = new HtmlWeb().WithChromeishUserAgent().ToSocialData(location);
+                jO = await new HtmlWeb().WithChromeishUserAgent().ToSocialDataAsync(location, retryPolicy);
 
                 listener.Flush();
                 this._testOutputHelper.WriteLine(writer.ToString());

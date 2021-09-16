@@ -1,9 +1,11 @@
 ﻿using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
+using Polly;
 using Songhay.Diagnostics;
 using Songhay.Extensions;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Songhay.Social.Extensions
 {
@@ -16,7 +18,7 @@ namespace Songhay.Social.Extensions
 
         static TraceSource traceSource;
 
-        public static JObject ToSocialData(this HtmlWeb web, string location)
+        public static async Task<JObject> ToSocialDataAsync(this HtmlWeb web, string location, AsyncPolicy retryPolicy)
         {
             if (web == null) throw new NullReferenceException($"The expected {nameof(HtmlWeb)} is not here.");
             if (string.IsNullOrWhiteSpace(location))
@@ -42,16 +44,19 @@ namespace Songhay.Social.Extensions
                 return JObject.FromObject(anonCatch);
             }
 
-            traceSource?.WriteLine($"{nameof(ToSocialData)}: loading `{location}`...");
+            traceSource?.WriteLine($"{nameof(ToSocialDataAsync)}: loading `{location}`...");
 
             HtmlDocument htmlDoc = null;
             try
             {
-                htmlDoc = web.Load(location);
+                await retryPolicy.ExecuteAsync(async () =>
+                {
+                    htmlDoc = await web.LoadFromWebAsync(location)
+                        .ConfigureAwait(continueOnCapturedContext: false);
+                }).ConfigureAwait(continueOnCapturedContext: false);
             }
             catch (Exception ex)
             {
-                traceSource?.TraceError(ex);
                 var anonCatch = new
                 {
                     errorType = ex.GetType().Name,
