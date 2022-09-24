@@ -1,14 +1,12 @@
 ﻿using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 
-namespace Songhay.Social.Models
+namespace Songhay.Social.Models;
+
+public class SocialPartition
 {
-    public class SocialPartition
-    {
-        public string GroupName { get; set; }
+    public string? GroupName { get; init; }
 
-        public int PartitionOrdinal { get; set; }
+    public int? PartitionOrdinal { get; init; }
 
-        public IEnumerable<JObject> Data { get; set; }
-    }
+    public IEnumerable<JObject> Data { get; set; } = new List<JObject>();
 }

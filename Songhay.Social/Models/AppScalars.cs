@@ -1,7 +1,6 @@
-﻿namespace Songhay.Social.Models
+﻿namespace Songhay.Social.Models;
+
+public static class AppScalars
 {
-    public static class AppScalars
-    {
-        public const string ConventionalSettingsFile = "app-settings.songhay-system.json";
-    }
+    public const string ConventionalSettingsFile = "app-settings.songhay-system.json";
 }

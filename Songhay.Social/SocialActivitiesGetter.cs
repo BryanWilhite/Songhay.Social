@@ -1,28 +1,26 @@
-﻿using Songhay.Models;
-using System;
-using System.Collections.Generic;
+﻿using Songhay.Abstractions;
+using Songhay.Models;
 
-namespace Songhay.Social
+namespace Songhay.Social;
+
+public sealed class SocialActivitiesGetter : ActivitiesGetter
 {
-    public class SocialActivitiesGetter : ActivitiesGetter
+    public SocialActivitiesGetter(string[] args) : base(args)
     {
-        public SocialActivitiesGetter(string[] args) : base(args)
+        LoadActivities(new Dictionary<string, Lazy<IActivity>>
         {
-            this.LoadActivities(new Dictionary<string, Lazy<IActivity>>
             {
-                {
-                    nameof(Activities.DeliciousActivity),
-                    new Lazy<IActivity>(() => new Activities.DeliciousActivity())
-                },
-                {
-                    nameof(Activities.IExcelDataReaderActivity),
-                    new Lazy<IActivity>(() => new Activities.IExcelDataReaderActivity())
-                },
-                {
-                    nameof(Activities.UniformResourceActivity),
-                    new Lazy<IActivity>(() => new Activities.UniformResourceActivity())
-                }
-            });
-        }
+                nameof(Activities.DeliciousActivity),
+                new Lazy<IActivity>(() => new Activities.DeliciousActivity())
+            },
+            {
+                nameof(Activities.IExcelDataReaderActivity),
+                new Lazy<IActivity>(() => new Activities.IExcelDataReaderActivity())
+            },
+            {
+                nameof(Activities.UniformResourceActivity),
+                new Lazy<IActivity>(() => new Activities.UniformResourceActivity())
+            }
+        });
     }
 }
