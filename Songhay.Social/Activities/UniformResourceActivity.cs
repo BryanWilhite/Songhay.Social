@@ -12,7 +12,7 @@ using Songhay.Abstractions;
 
 namespace Songhay.Social.Activities;
 
-public class UniformResourceActivity : IActivityWithTask<string, string>
+public class UniformResourceActivity : IActivityWithTask<string?, string?>
 {
     static UniformResourceActivity()
     {
@@ -21,9 +21,9 @@ public class UniformResourceActivity : IActivityWithTask<string, string>
             .GetTraceSourceFromConfiguredName()
             .WithSourceLevels();
 
-        var retryCount = 3;
+        const int retryCount = 3;
 
-        retryPolicy = Policy
+        RetryPolicy = Policy
             .Handle<HttpRequestException>()
             .Or<TaskCanceledException>()
             .Or<TimeoutException>()
@@ -43,47 +43,47 @@ public class UniformResourceActivity : IActivityWithTask<string, string>
             );
     }
 
-    static readonly TraceSource TraceSource;
+    static readonly TraceSource? TraceSource;
 
-    public string DisplayHelp(ProgramArgs args)
+    public string DisplayHelp(ProgramArgs? args)
     {
-        args.WithDefaultHelpText();
+        args?.WithDefaultHelpText();
 
-        args.HelpSet.Remove(ProgramArgs.BasePath);
-        args.HelpSet.Remove(ProgramArgs.BasePathRequired);
-        args.HelpSet.Remove(ProgramArgs.OutputUnderBasePath);
-        args.HelpSet.Remove(ProgramArgs.SettingsFile);
+        args?.HelpSet.Remove(ProgramArgs.BasePath);
+        args?.HelpSet.Remove(ProgramArgs.BasePathRequired);
+        args?.HelpSet.Remove(ProgramArgs.OutputUnderBasePath);
+        args?.HelpSet.Remove(ProgramArgs.SettingsFile);
 
-        return args.ToHelpDisplayText();
+        return args?.ToHelpDisplayText() ?? string.Empty;
     }
 
-    public void Start(ProgramArgs args)
+    public void Start(ProgramArgs? args)
     {
         var json = args.GetStringInput();
 
         var output = StartAsync(json).GetAwaiter().GetResult();
 
-        args.WriteOutputToFile(output);
+        args.WriteOutputToFile(output.ToReferenceTypeValueOrThrow());
     }
 
-    public async Task<string> StartAsync(string json)
+    public async Task<string?> StartAsync(string? json)
     {
         TraceSource?.WriteLine($"{nameof(UniformResourceActivity)} starting...");
 
-        var uris = JsonSerializer.Deserialize<string[]>(json);
+        var uris = JsonSerializer.Deserialize<string[]>(json.ToReferenceTypeValueOrThrow());
 
-        return await GenerateTwitterPartitionAsync(uris)
+        return await GenerateTwitterPartitionAsync(uris.ToReferenceTypeValueOrThrow())
             .ConfigureAwait(continueOnCapturedContext: false);
     }
 
-    internal async Task<string> GenerateTwitterPartitionAsync(string[] uris)
+    internal static async Task<string> GenerateTwitterPartitionAsync(string[] uris)
     {
 
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
         var htmlWeb = new HtmlWeb().WithChromeishUserAgent();
 
-        var tasks = uris.Select(i => htmlWeb.ToSocialDataAsync(i, retryPolicy));
+        var tasks = uris.Select(i => htmlWeb.ToSocialDataAsync(i, RetryPolicy)).ToArray();
 
         await Task.WhenAll(tasks).ConfigureAwait(continueOnCapturedContext: false);
 
@@ -94,5 +94,5 @@ public class UniformResourceActivity : IActivityWithTask<string, string>
         return jPartition.ToString();
     }
 
-    internal static readonly AsyncPolicy retryPolicy;
+    internal static readonly AsyncPolicy RetryPolicy;
 }

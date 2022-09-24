@@ -9,6 +9,7 @@ using Songhay.Models;
 
 namespace Songhay.Social.Activities;
 
+// ReSharper disable once InconsistentNaming
 public class IExcelDataReaderActivity : IActivity
 {
     static IExcelDataReaderActivity() => TraceSource = TraceSources
@@ -18,18 +19,20 @@ public class IExcelDataReaderActivity : IActivity
 
     static readonly TraceSource? TraceSource;
 
-    public string DisplayHelp(ProgramArgs args)
+    public string DisplayHelp(ProgramArgs? args)
     {
-        if(args.HelpSet.Any()) return args.ToHelpDisplayText();
+        ArgumentNullException.ThrowIfNull(args);
+
+        if(args.HelpSet.Any()) return args.ToHelpDisplayText() ?? string.Empty;
 
         args.HelpSet.Add(ArgExcelFile, "The absolute path to Excel-file input.");
         args.HelpSet.Add(ArgPartitionRoot, "The absolute path to Excel-file partition output Directory.");
         args.HelpSet.Add(ArgPartitionSize, "The size of Excel-file output partitions.");
 
-        return args.ToHelpDisplayText();
+        return args.ToHelpDisplayText() ?? string.Empty;
     }
 
-    public void Start(ProgramArgs args)
+    public void Start(ProgramArgs? args)
     {
         TraceSource?.WriteLine($"{nameof(IExcelDataReaderActivity)} starting...");
 
@@ -59,7 +62,7 @@ public class IExcelDataReaderActivity : IActivity
             while (reader.Read())
             {
                 var uri = reader.GetString(0);
-                TraceSource?.TraceVerbose($"{nameof(PartitionRows)}: {nameof(uri)}: {uri ?? "[null]"}");
+                TraceSource?.TraceVerbose($"{nameof(PartitionRows)}: {nameof(uri)}: {uri}");
                 if (string.IsNullOrWhiteSpace(uri)) continue;
 
                 uriList.Add(uri);
@@ -74,24 +77,26 @@ public class IExcelDataReaderActivity : IActivity
                 uriList.Clear();
             }
 
-            TraceSource?.TraceVerbose($"{nameof(PartitionRows)}: partitioning [final partition count: {uriList?.Count ?? 0}]...");
+            TraceSource?.TraceVerbose($"{nameof(PartitionRows)}: partitioning [final partition count: {uriList.Count}]...");
             SavePartition(uriList, excelPath, partitionRoot, reader.Name, counter);
 
         } while (reader.NextResult());
     }
 
-    internal (string excelPath, int partitionSize, string partitionRoot) ProcessArgs(ProgramArgs args)
+    internal static (string excelPath, int partitionSize, string partitionRoot) ProcessArgs(ProgramArgs? args)
     {
+        ArgumentNullException.ThrowIfNull(args);
+
         var excelPath = args.GetArgValue(ArgExcelFile);
         if (!File.Exists(excelPath))
         {
             throw new FileNotFoundException($"The expected Excel file, `{excelPath ?? "[null]"}`, is not here.");
         }
 
-        string partitionRoot = args.GetArgValue(ArgPartitionRoot);
+        string partitionRoot = args.GetArgValue(ArgPartitionRoot).ToReferenceTypeValueOrThrow();
         if (!Directory.Exists(partitionRoot))
         {
-            throw new DirectoryNotFoundException($"The expected Excel-file partition root, `{partitionRoot ?? "[null]"}`, is not here.");
+            throw new DirectoryNotFoundException($"The expected Excel-file partition root, `{partitionRoot}`, is not here.");
         }
 
         int partitionSize = Convert.ToInt32(args.GetArgValue(ArgPartitionSize));
@@ -99,7 +104,7 @@ public class IExcelDataReaderActivity : IActivity
         return (excelPath, partitionSize, partitionRoot);
     }
 
-    internal void SavePartition(IEnumerable<string> partition, string excelPath, string partitionRoot, string partitionDirectory, int partitionCount)
+    internal static void SavePartition(IEnumerable<string> partition, string excelPath, string partitionRoot, string partitionDirectory, int partitionCount)
     {
         var jPartition = JArray.FromObject(partition);
         var excelFileName = Path.GetFileNameWithoutExtension(excelPath);

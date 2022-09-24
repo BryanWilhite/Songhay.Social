@@ -9,19 +9,20 @@ using Xunit.Abstractions;
 
 namespace Songhay.Social.Tests.Activities;
 
+// ReSharper disable once InconsistentNaming
 public class IExcelDataReaderActivityTests
 {
     static IExcelDataReaderActivityTests()
     {
         TraceSources.ConfiguredTraceSourceName = $"trace-{nameof(IExcelDataReaderActivityTests)}";
 
-        traceSource = TraceSources
+        TraceSource = TraceSources
             .Instance
             .GetTraceSourceFromConfiguredName()
             .WithSourceLevels();
     }
 
-    static TraceSource traceSource;
+    static readonly TraceSource? TraceSource;
 
 
     public IExcelDataReaderActivityTests(ITestOutputHelper helper)
@@ -67,16 +68,14 @@ public class IExcelDataReaderActivityTests
             directory.Delete(recursive: true);
         }
 
-        using (var writer = new StringWriter())
-        using (var listener = new TextWriterTraceListener(writer))
-        {
-            ProgramUtility.InitializeTraceSource(listener);
+        using var writer = new StringWriter();
+        using var listener = new TextWriterTraceListener(writer);
+        ProgramUtility.InitializeTraceSource(listener);
 
-            var activity = new IExcelDataReaderActivity();
-            activity.PartitionRows(excelPath, partitionSize, partitionRoot);
+        var activity = new IExcelDataReaderActivity();
+        activity.PartitionRows(excelPath, partitionSize, partitionRoot);
 
-            _testOutputHelper.WriteLine(writer.ToString());
-        }
+        _testOutputHelper.WriteLine(writer.ToString());
     }
 
     readonly ITestOutputHelper _testOutputHelper;

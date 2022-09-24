@@ -9,16 +9,16 @@ namespace Songhay.Social.Extensions;
 
 public static class HtmlWebExtensions
 {
-    static HtmlWebExtensions() => traceSource = TraceSources
+    static HtmlWebExtensions() => TraceSource = TraceSources
         .Instance
         .GetTraceSourceFromConfiguredName()
         .WithSourceLevels();
 
-    static TraceSource traceSource;
+    static readonly TraceSource? TraceSource;
 
     public static async Task<JObject> ToSocialDataAsync(this HtmlWeb web, string location, AsyncPolicy retryPolicy)
     {
-        if (web == null) throw new NullReferenceException($"The expected {nameof(HtmlWeb)} is not here.");
+        ArgumentNullException.ThrowIfNull(web);
         if (string.IsNullOrWhiteSpace(location))
         {
             var anonCatch = new
@@ -42,9 +42,9 @@ public static class HtmlWebExtensions
             return JObject.FromObject(anonCatch);
         }
 
-        traceSource?.WriteLine($"{nameof(ToSocialDataAsync)}: loading `{location}`...");
+        TraceSource?.WriteLine($"{nameof(ToSocialDataAsync)}: loading `{location}`...");
 
-        HtmlDocument htmlDoc = null;
+        HtmlDocument? htmlDoc = null;
         try
         {
             await retryPolicy.ExecuteAsync(async () =>
@@ -78,39 +78,41 @@ public static class HtmlWebExtensions
 
         #region set anonymous properties:
 
-        //FUNKYKB: tracing HTML can fill up text buffer fast when this member is called repeatedly:
-        traceSource?.TraceVerbose($"{nameof(HtmlDocument.DocumentNode)}: {((bool)htmlDoc?.DocumentNode?.HasChildNodes ? "[document has child nodes]" : "[no child notes]")}");
+        var documentNode = htmlDoc.ToReferenceTypeValueOrThrow().DocumentNode.ToReferenceTypeValueOrThrow();
 
-        var metaTwitterImageNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:image:src']");
-        traceSource?.TraceVerbose($"{nameof(metaTwitterImageNode)}: {metaTwitterImageNode?.OuterHtml ?? "[null]"}");
+        //FUNKYKB: tracing HTML can fill up text buffer fast when this member is called repeatedly:
+        TraceSource?.TraceVerbose($"{nameof(HtmlDocument.DocumentNode)}: {(documentNode.HasChildNodes ? "[document has child nodes]" : "[no child notes]")}");
+
+        var metaTwitterImageNode = documentNode.SelectSingleNode("//meta[@name='twitter:image:src']");
+        TraceSource?.TraceVerbose($"{nameof(metaTwitterImageNode)}: {metaTwitterImageNode?.OuterHtml ?? "[null]"}");
         var metaTwitterImage = metaTwitterImageNode?.Attributes["content"]?.Value;
 
-        var metaTwitterHandleNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:site']");
-        traceSource?.TraceVerbose($"{nameof(metaTwitterHandleNode)}: {metaTwitterHandleNode?.OuterHtml ?? "[null]"}");
+        var metaTwitterHandleNode = documentNode.SelectSingleNode("//meta[@name='twitter:site']");
+        TraceSource?.TraceVerbose($"{nameof(metaTwitterHandleNode)}: {metaTwitterHandleNode?.OuterHtml ?? "[null]"}");
         var metaTwitterHandle = metaTwitterHandleNode?.Attributes["content"]?.Value;
 
-        var metaTwitterTitleNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:title']");
-        traceSource?.TraceVerbose($"{nameof(metaTwitterTitleNode)}: {metaTwitterTitleNode?.OuterHtml ?? "[null]"}");
+        var metaTwitterTitleNode = documentNode.SelectSingleNode("//meta[@name='twitter:title']");
+        TraceSource?.TraceVerbose($"{nameof(metaTwitterTitleNode)}: {metaTwitterTitleNode?.OuterHtml ?? "[null]"}");
         var metaTwitterTitle = metaTwitterTitleNode?.Attributes["content"]?.Value;
 
-        var metaTwitterDescriptionNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@name='twitter:description']");
-        traceSource?.TraceVerbose($"{nameof(metaTwitterDescriptionNode)}: {metaTwitterDescriptionNode?.OuterHtml ?? "[null]"}");
+        var metaTwitterDescriptionNode = documentNode.SelectSingleNode("//meta[@name='twitter:description']");
+        TraceSource?.TraceVerbose($"{nameof(metaTwitterDescriptionNode)}: {metaTwitterDescriptionNode?.OuterHtml ?? "[null]"}");
         var metaTwitterDescription = metaTwitterDescriptionNode?.Attributes["content"]?.Value;
 
-        var metaOgImageNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@property='og:image']");
-        traceSource?.TraceVerbose($"{nameof(metaOgImageNode)}: {metaOgImageNode?.OuterHtml ?? "[null]"}");
+        var metaOgImageNode = documentNode.SelectSingleNode("//meta[@property='og:image']");
+        TraceSource?.TraceVerbose($"{nameof(metaOgImageNode)}: {metaOgImageNode?.OuterHtml ?? "[null]"}");
         var metaOgImage = metaOgImageNode?.Attributes["content"]?.Value;
 
-        var metaOgTitleNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@property='og:title']");
-        traceSource?.TraceVerbose($"{nameof(metaOgTitleNode)}: {metaOgTitleNode?.OuterHtml ?? "[null]"}");
+        var metaOgTitleNode = documentNode.SelectSingleNode("//meta[@property='og:title']");
+        TraceSource?.TraceVerbose($"{nameof(metaOgTitleNode)}: {metaOgTitleNode?.OuterHtml ?? "[null]"}");
         var metaOgTitle = metaOgTitleNode?.Attributes["content"]?.Value;
 
-        var metaOgDescriptionNode = htmlDoc.DocumentNode.SelectSingleNode("//meta[@property='og:description']");
-        traceSource?.TraceVerbose($"{nameof(metaOgDescriptionNode)}: {metaOgDescriptionNode?.OuterHtml ?? "[null]"}");
+        var metaOgDescriptionNode = documentNode.SelectSingleNode("//meta[@property='og:description']");
+        TraceSource?.TraceVerbose($"{nameof(metaOgDescriptionNode)}: {metaOgDescriptionNode?.OuterHtml ?? "[null]"}");
         var metaOgDescription = metaOgDescriptionNode?.Attributes["content"]?.Value;
 
-        var titleNode = htmlDoc.DocumentNode.SelectSingleNode("//head/title");
-        traceSource?.TraceVerbose($"{nameof(titleNode)}: {titleNode?.OuterHtml ?? "[null]"}");
+        var titleNode = documentNode.SelectSingleNode("//head/title");
+        TraceSource?.TraceVerbose($"{nameof(titleNode)}: {titleNode?.OuterHtml ?? "[null]"}");
         var title = titleNode?.InnerText;
 
         var statusTitle = ((!string.IsNullOrWhiteSpace(metaTwitterTitle)) ? metaTwitterTitle

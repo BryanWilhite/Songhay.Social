@@ -17,15 +17,15 @@ public class HtmlWebExtensionsTests
     {
         TraceSources.ConfiguredTraceSourceName = $"trace-{nameof(HtmlWebExtensionsTests)}";
 
-        traceSource = TraceSources
+        TraceSource = TraceSources
             .Instance
             .GetTraceSourceFromConfiguredName()
             .WithSourceLevels();
     }
 
-    static TraceSource traceSource;
+    static readonly TraceSource? TraceSource;
 
-    static readonly AsyncPolicy retryPolicy = UniformResourceActivity.retryPolicy; 
+    static readonly AsyncPolicy RetryPolicy = UniformResourceActivity.RetryPolicy; 
 
     public HtmlWebExtensionsTests(ITestOutputHelper testOutputHelper)
     {
@@ -44,14 +44,14 @@ public class HtmlWebExtensionsTests
         target = ProgramAssemblyUtility.GetPathFromAssembly(GetType().Assembly, target);
         Assert.True(File.Exists(target));
 
-        JObject jO = null;
+        JObject? jO = null;
 
-        using (var writer = new StringWriter())
+        await using (var writer = new StringWriter())
         using (var listener = new TextWriterTraceListener(writer))
         {
             ProgramUtility.InitializeTraceSource(listener);
 
-            jO = await new HtmlWeb().WithChromeishUserAgent().ToSocialDataAsync(location, retryPolicy);
+            jO = await new HtmlWeb().WithChromeishUserAgent().ToSocialDataAsync(location, RetryPolicy);
 
             listener.Flush();
             _testOutputHelper.WriteLine(writer.ToString());
@@ -59,7 +59,7 @@ public class HtmlWebExtensionsTests
 
         Assert.NotNull(jO);
 
-        File.WriteAllText(target, jO.ToString());
+        await File.WriteAllTextAsync(target, jO.ToString());
     }
 
     readonly ITestOutputHelper _testOutputHelper;

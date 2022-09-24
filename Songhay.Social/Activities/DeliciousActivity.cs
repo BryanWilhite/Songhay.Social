@@ -22,15 +22,15 @@ public class DeliciousActivity : IActivity
                 var line = anonym.Line.Remove(0, 4)
                     .Replace("&amp;", "&")
                     .Replace("&", "&amp;");
-                var innerXml = HtmlUtility.GetInnerXml(line, "A");
+                var innerXml = HtmlUtility.GetInnerXml(line, "A").ToReferenceTypeValueOrThrow();
                 line = line.Replace(innerXml, XmlUtility.XmlEncode(innerXml));
                 var A = XElement.Parse(line);
                 var link = new DeliciousLink
                 {
-                    AddDate = ProgramTypeUtility.ConvertDateTimeFromUnixTime(Convert.ToDouble(A.Attribute("ADD_DATE").Value)),
-                    Href = new Uri(A.Attribute("HREF").Value, UriKind.Absolute),
-                    IsPrivate = ProgramTypeUtility.ParseBoolean(A.Attribute("PRIVATE").Value).GetValueOrDefault(),
-                    Tags = A.Attribute("TAGS").Value,
+                    AddDate = ProgramTypeUtility.ConvertDateTimeFromUnixTime(Convert.ToDouble(A.Attribute("ADD_DATE")?.Value)),
+                    Href = new Uri(A.Attribute("HREF")?.Value ?? string.Empty, UriKind.Absolute),
+                    IsPrivate = ProgramTypeUtility.ParseBoolean(A.Attribute("PRIVATE")?.Value).GetValueOrDefault(),
+                    Tags = A.Attribute("TAGS")?.Value,
                     Title = A.Value
                 };
                 deliciousLinks.Add(link);

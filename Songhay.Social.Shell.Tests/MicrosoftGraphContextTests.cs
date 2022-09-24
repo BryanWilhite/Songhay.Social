@@ -17,7 +17,7 @@ public class MicrosoftGraphContextTests
         var projectInfo = new DirectoryInfo(projectRoot);
         Assert.True(projectInfo.Exists);
 
-        var basePath = projectInfo.Parent.FindDirectory("Songhay.Social.Web").FullName;
+        var basePath = projectInfo.Parent?.FindDirectory("Songhay.Social.Web")?.FullName;
         var meta = new ProgramMetadata();
         var configuration = ProgramUtility.LoadConfiguration(basePath, b =>
         {
@@ -27,7 +27,7 @@ public class MicrosoftGraphContextTests
         });
         configuration.Bind(nameof(ProgramMetadata), meta);
 
-        _restApiMetadata = meta.RestApiMetadataSet.TryGetValueWithKey("MicrosoftGraph", throwException : true);
+        _restApiMetadata = meta.RestApiMetadataSet.TryGetValueWithKey("MicrosoftGraph").ToReferenceTypeValueOrThrow();
     }
 
     [Theory]
@@ -40,9 +40,9 @@ public class MicrosoftGraphContextTests
         _testOutputHelper.WriteLine($"URI template: {template}");
 
         var uriTemplate = new UriTemplate(template);
-        var scope = _restApiMetadata.ClaimsSet.TryGetValueWithKey("scopes").Replace(',', ' ');
-        var uri = uriTemplate.BindByPosition(_restApiMetadata.ApiKey, redirectLocation, scope);
-        _testOutputHelper.WriteLine($"URI: {uri.OriginalString}");
+        var scope = _restApiMetadata.ClaimsSet.TryGetValueWithKey("scopes").ToReferenceTypeValueOrThrow().Replace(',', ' ');
+        var uri = uriTemplate.BindByPosition(_restApiMetadata.ApiKey.ToReferenceTypeValueOrThrow(), redirectLocation, scope);
+        _testOutputHelper.WriteLine($"URI: {uri?.OriginalString ?? "[null]"}");
 
         var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
         var response = await requestMessage.SendAsync();
