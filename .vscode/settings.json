@@ -23,5 +23,6 @@
         "strahl",
         "xbuild",
         "zaefferer"
-    ]
+    ],
+    "FSharp.showExplorerOnStartup": false
 }
