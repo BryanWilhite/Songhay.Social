@@ -11,7 +11,7 @@
         <PackageReference Include="ExcelDataReader" Version="3.6.0" />
         <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
         <PackageReference Include="Polly" Version="7.2.3" />
-        <PackageReference Include="SonghayCore" Version="6.0.1" />
+        <PackageReference Include="SonghayCore" Version="6.0.4" />
 
         <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
 
